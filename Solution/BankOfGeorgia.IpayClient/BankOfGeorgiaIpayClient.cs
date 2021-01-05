@@ -2,7 +2,10 @@
 using JWT.Builder;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -25,9 +28,23 @@ namespace BankOfGeorgia.IpayClient
         /// Endpoint: /oauth2/token
         /// </summary>
         /// <returns></returns>
-        public Task AuthenticateAsync()
+        public async Task AuthenticateAsync()
         {
-            throw new NotImplementedException();
+            var authenticationString = $"{_options.ClientId}:{_options.SecretKey}";
+            var base64EncodedAuthenticationString = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes(authenticationString));
+
+            var result = await MakeHttpRequest<AuthenticateResponse>(
+                GetFullUrl("/oauth2/token"),
+                false,
+                HttpMethod.Post,
+                new Dictionary<string, string>
+                {
+                    { "grant_type", "client_credentials" }
+                },
+                client => client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64EncodedAuthenticationString)
+                );
+
+            _jwtToken = result.access_token;
         }
 
         /// <summary>
@@ -55,9 +72,19 @@ namespace BankOfGeorgia.IpayClient
         /// Endpoint: /checkout/refund
         /// </summary>
         /// <returns></returns>
-        public Task UnblockRequestAsync()
+        public Task UnblockRequestAsync(string orderId, decimal? amount = null)
         {
-            throw new NotImplementedException();
+            return MakeHttpRequest<object>(
+                GetFullUrl("/checkout/refund"),
+                false,
+                HttpMethod.Post,
+                new Dictionary<string, string>
+                {
+                    { "order_id", orderId },
+                    { "amount", amount?.ToString() }
+                },
+                null
+                );
         }
 
         /// <summary>
@@ -90,27 +117,28 @@ namespace BankOfGeorgia.IpayClient
             throw new NotImplementedException();
         }
 
-        private async Task<TResult> MakeHttpRequest<TResult>(string url, bool useAuth, bool useHttpPost, object postPayload = null)
+        private async Task<TResult> MakeHttpRequest<TResult>(string url, bool useJwtAuth, HttpMethod method, IEnumerable<KeyValuePair<string, string>> postPayload = null, Action<HttpClient> processClient = null)
         {
             using var httpClient = new HttpClient();
 
-            if (useAuth)
+            if (useJwtAuth)
             {
                 await AuthenticateIfRequired();
                 httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + _jwtToken);
             }
 
-            HttpResponseMessage httpResponseMessage;
-            if (useHttpPost)
+            processClient?.Invoke(httpClient);
+
+            using var requestMessage = new HttpRequestMessage(method, url);
+            if (postPayload != null)
             {
-                var serializedPostPayload = JsonConvert.SerializeObject(postPayload);
-                using var stringContent = new StringContent(serializedPostPayload, Encoding.UTF8, "application/json");
-                httpResponseMessage = await httpClient.PostAsync(url, stringContent);
-            }
-            else
-            {
-                httpResponseMessage = await httpClient.GetAsync(url);
-            }
+                requestMessage.Content = new FormUrlEncodedContent(
+                    postPayload
+                        .Where(i => i.Value != null)
+                    );
+            };
+
+            using var httpResponseMessage = await httpClient.SendAsync(requestMessage);
 
             var responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
             try
@@ -132,6 +160,11 @@ namespace BankOfGeorgia.IpayClient
 
             if (!JwtHelper.IsTokenValid(_jwtToken))
                 await AuthenticateAsync();
+        }
+
+        private string GetFullUrl(string endpoint)
+        {
+            return $"https://ipay.ge/opay/api/v1{endpoint}";
         }
     }
 }
