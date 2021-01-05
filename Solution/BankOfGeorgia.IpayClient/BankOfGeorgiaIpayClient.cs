@@ -1,4 +1,9 @@
-﻿using System;
+﻿using JWT.Algorithms;
+using JWT.Builder;
+using Newtonsoft.Json;
+using System;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace BankOfGeorgia.IpayClient
@@ -6,7 +11,7 @@ namespace BankOfGeorgia.IpayClient
     public class BankOfGeorgiaIpayClient
     {
         private readonly BankOfGeorgiaIpayClientOptions _options;
-        private string jwtToken = null;
+        private string _jwtToken = null;
 
         public BankOfGeorgiaIpayClient(
             BankOfGeorgiaIpayClientOptions options
@@ -85,12 +90,48 @@ namespace BankOfGeorgia.IpayClient
             throw new NotImplementedException();
         }
 
+        private async Task<TResult> MakeHttpRequest<TResult>(string url, bool useAuth, bool useHttpPost, object postPayload = null)
+        {
+            using var httpClient = new HttpClient();
+
+            if (useAuth)
+            {
+                await AuthenticateIfRequired();
+                httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + _jwtToken);
+            }
+
+            HttpResponseMessage httpResponseMessage;
+            if (useHttpPost)
+            {
+                var serializedPostPayload = JsonConvert.SerializeObject(postPayload);
+                using var stringContent = new StringContent(serializedPostPayload, Encoding.UTF8, "application/json");
+                httpResponseMessage = await httpClient.PostAsync(url, stringContent);
+            }
+            else
+            {
+                httpResponseMessage = await httpClient.GetAsync(url);
+            }
+
+            var responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
+            try
+            {
+                httpResponseMessage.EnsureSuccessStatusCode();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"HTTP request failed with the following response content: responseContent", ex);
+            }
+
+            return JsonConvert.DeserializeObject<TResult>(responseContent);
+        }
+
         private async Task AuthenticateIfRequired()
         {
-            if (jwtToken == null)
+            if (_jwtToken == null)
                 await AuthenticateAsync();
 
-
+            if (!JwtHelper.IsTokenValid(_jwtToken))
+                await AuthenticateAsync();
         }
     }
 }
