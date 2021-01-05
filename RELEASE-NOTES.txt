@@ -1,0 +1,47 @@
+v3.0.0
+    - Added possibility to configure multiple merchants
+    - Added integration with ASP.NET Core dependency injection
+v2.5.0
+    - Add legacy environment called LegacyProduction for merchants using old host securepay.ufc.ge
+v2.4.0
+    - Fix IsError and ErrorMessage values when exception occurs
+
+v2.3.0
+    - Fixed biller client response processing due to UFC adding "_oc" suffix to response.
+
+v2.2.0
+    - Fix transaction state value for transactions when error is returned from server. Show Failed instead of unknown.
+
+v2.1.0
+    - Added transaction state in CheckTransactionResult with the following possible values (Pending, Succeeded, Failed)
+
+v2.0.0 [**Breaking**]
+    - Renamed operation result class names from Response To Result suffix
+    - Do not throw exception for HTTP communication problems, insted return Exception in a result as a property
+    - Return HTTP request URL in the result as a property
+    - Return HTTP request post params query string in the result as a property
+
+v1.5.0
+    - Fixed error success checks
+
+v1.4.0 [**Breaking**]
+    - Fixed ReocurringPaymentExpiry year value.
+    - Pass in description value to ExecuteCreditTransaction mthod call
+    - **Breaking** Renamed ExecuteCreditTransaction to ExecuteCreditTransactionAsync
+    - **Breaking** Renamed CloseBusinessDay to CloseBusinessDayAsync
+
+v1.3.0
+    - Added CloseBusinessDay operation (command=p).
+    - Added RegisterTransactionAndGetReoccuringPaymentIdWithoutCharge operation (command=p).
+    - Fixed success check for Reversal and Refund operations.
+    - ReocurringPaymentExpiry property of CheckTransactionResultResponse is now set to the last day of the month rather than the first day.
+    
+v1.2.0
+    [Unreleases]
+
+v1.1.0
+    - Bug fixes.
+    
+    
+v1.0.0
+    - Initial release.
