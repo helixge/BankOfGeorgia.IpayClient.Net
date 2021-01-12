@@ -11,6 +11,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankOfGeorgia.IpayClient.Te
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{AF9560FF-F8AF-42E6-9B66-B091CD2F25F0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{19FAB4B4-5BF7-4FCA-A1D1-3D6B67758AC3}"
+	ProjectSection(SolutionItems) = preProject
+		..\README.md = ..\README.md
+		..\RELEASE-NOTES.txt = ..\RELEASE-NOTES.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

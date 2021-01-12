@@ -1,7 +1,23 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <RootNamespace>BankOfGeorgia.IpayClient</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Helix</Authors>
+    <Company>Helix</Company>
+    <PackageProjectUrl>https://github.com/helixge/BankOfGeorgia.IpayClient.Net</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/helixge/BankOfGeorgia.IpayClient.Net</RepositoryUrl>
+    <Copyright>Helix</Copyright>
+    <PackageId>BankOfGeorgia.IpayClient</PackageId>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageTags>bankofgeorgia;bank of georgia;bank;ecommerce;payments;visa;mastercard;master card;amex;american express;americanexpress;e-commerce</PackageTags>
+    <PackageIcon>helix.png</PackageIcon>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Version>1.0.0-alpha</Version>
+    <Product>Bank of Georgia iPay Card Payments Gateway Client (.NET Library)</Product>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,4 +28,23 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\..\helix.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <Target Name="PreparePackageReleaseNotesFromFile" BeforeTargets="GenerateNuspec">
+    <ReadLinesFromFile File="../../RELEASE-NOTES.txt">
+      <Output TaskParameter="Lines" ItemName="ReleaseNoteLines" />
+    </ReadLinesFromFile>
+    <PropertyGroup>
+      <PackageReleaseNotes>@(ReleaseNoteLines, '%0a')</PackageReleaseNotes>
+    </PropertyGroup>
+  </Target>
 </Project>
