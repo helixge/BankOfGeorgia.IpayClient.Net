@@ -4,7 +4,7 @@ using System.Text;
 
 namespace BankOfGeorgia.IpayClient
 {
-    public class AuthenticateResponse
+    public class AuthenticateResponse : BaseResponse
     {
         public string access_token { get; set; }
         public string token_type { get; set; }
@@ -13,10 +13,5 @@ namespace BankOfGeorgia.IpayClient
         /// Epoch milliseconds
         /// </summary>
         public long expires_in { get; set; }
-    }
-
-    public class UnblockRequest
-    {
-
     }
 }

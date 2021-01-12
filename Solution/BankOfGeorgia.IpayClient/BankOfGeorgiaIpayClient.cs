@@ -62,9 +62,15 @@ namespace BankOfGeorgia.IpayClient
         /// Endpoint: /checkout/payment/pre-auth/complete/{order_id}
         /// </summary>
         /// <returns></returns>
-        public Task CompletePreAuthPaymentAsync()
+        public Task<CompletePreAuthPaymentResponse> CompletePreAuthPaymentAsync(string orderId)
         {
-            throw new NotImplementedException();
+            return MakeHttpRequest<CompletePreAuthPaymentResponse>(
+                GetFullUrl($"/checkout/payment/pre-auth/complete/{orderId}"),
+                true,
+                HttpMethod.Get,
+                null,
+                null
+                );
         }
 
         /// <summary>
@@ -72,11 +78,11 @@ namespace BankOfGeorgia.IpayClient
         /// Endpoint: /checkout/refund
         /// </summary>
         /// <returns></returns>
-        public Task UnblockRequestAsync(string orderId, decimal? amount = null)
+        public Task RefundAsync(string orderId, decimal? amount = null)
         {
             return MakeHttpRequest<object>(
                 GetFullUrl("/checkout/refund"),
-                false,
+                true,
                 HttpMethod.Post,
                 new Dictionary<string, string>
                 {
@@ -92,9 +98,15 @@ namespace BankOfGeorgia.IpayClient
         /// Endpoint: /checkout/orders/{order_id}
         /// </summary>
         /// <returns></returns>
-        public Task GetOrderDetailsAsync()
+        public Task<GetOrderDetailsResponse> GetOrderDetailsAsync(string orderId)
         {
-            throw new NotImplementedException();
+            return MakeHttpRequest<GetOrderDetailsResponse>(
+                GetFullUrl($"/checkout/orders/{orderId}"),
+                true,
+                HttpMethod.Get,
+                null,
+                null
+                );
         }
 
         /// <summary>
@@ -102,9 +114,15 @@ namespace BankOfGeorgia.IpayClient
         /// Endpoint: /checkout/orders/status/{order_id}
         /// </summary>
         /// <returns></returns>
-        public Task GetOrderStatusAsync()
+        public Task GetOrderStatusAsync(string orderId)
         {
-            throw new NotImplementedException();
+            return MakeHttpRequest<GetOrderDetailsResponse>(
+                GetFullUrl($"/checkout/status/{orderId}"),
+                true,
+                HttpMethod.Get,
+                null,
+                null
+                );
         }
 
         /// <summary>
@@ -112,10 +130,18 @@ namespace BankOfGeorgia.IpayClient
         /// Endpoint: /checkout/payment/{order_id}
         /// </summary>
         /// <returns></returns>
-        public Task GetPaymentDetailsAsync()
+        public Task<GetPaymentDetailsResponse> GetPaymentDetailsAsync(string orderId)
         {
-            throw new NotImplementedException();
+            return MakeHttpRequest<GetPaymentDetailsResponse>(
+                GetFullUrl($"/checkout/payment/{orderId}"),
+                true,
+                HttpMethod.Get,
+                null,
+                null
+                );
         }
+
+
 
         private async Task<TResult> MakeHttpRequest<TResult>(string url, bool useJwtAuth, HttpMethod method, IEnumerable<KeyValuePair<string, string>> postPayload = null, Action<HttpClient> processClient = null)
         {
