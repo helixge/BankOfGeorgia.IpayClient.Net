@@ -52,7 +52,7 @@ namespace BankOfGeorgia.IpayClient
         /// Endpoint: /checkout/orders
         /// </summary>
         /// <returns></returns>
-        public Task MakeOrderAsync()
+        public Task<MakeOrderResponse> MakeOrderAsync(BankOfGeorgiaIpayOrder order)
         {
             throw new NotImplementedException();
         }
