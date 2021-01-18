@@ -1,6 +1,4 @@
-﻿using JWT.Algorithms;
-using JWT.Builder;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +9,11 @@ using System.Threading.Tasks;
 
 namespace BankOfGeorgia.IpayClient
 {
+    /// <summary>
+    /// Full documentation is located at: https://developer.ipay.ge/v1/
+    /// </summary>
     public class BankOfGeorgiaIpayClient
     {
-        //https://developer.ipay.ge/v1/
-
         private readonly BankOfGeorgiaIpayClientOptions _options;
         private string _jwtToken = null;
 
@@ -155,7 +154,6 @@ namespace BankOfGeorgia.IpayClient
                 null
                 );
         }
-
 
 
         private Task<TResult> MakeHttpRequest<TResult>(string url, bool useJwtAuth, HttpMethod method, object jsonPostPayload = null, Action<HttpClient> processClient = null)
