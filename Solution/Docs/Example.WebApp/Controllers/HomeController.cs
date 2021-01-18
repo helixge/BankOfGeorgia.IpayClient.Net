@@ -25,7 +25,7 @@ namespace Example.WebApp.Controllers
         public async Task<IActionResult> Pay()
         {
             //Create Order
-            var order = new BankOfGeorgiaIpayOrder()
+            var order = new IpayOrder()
             {
 
             };

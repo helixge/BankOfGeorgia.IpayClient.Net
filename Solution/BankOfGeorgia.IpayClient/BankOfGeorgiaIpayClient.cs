@@ -13,6 +13,8 @@ namespace BankOfGeorgia.IpayClient
 {
     public class BankOfGeorgiaIpayClient
     {
+        //https://developer.ipay.ge/v1/
+
         private readonly BankOfGeorgiaIpayClientOptions _options;
         private string _jwtToken = null;
 
@@ -52,9 +54,15 @@ namespace BankOfGeorgia.IpayClient
         /// Endpoint: /checkout/orders
         /// </summary>
         /// <returns></returns>
-        public Task<MakeOrderResponse> MakeOrderAsync(BankOfGeorgiaIpayOrder order)
+        public Task<MakeOrderResponse> MakeOrderAsync(IpayOrder order)
         {
-            throw new NotImplementedException();
+            return MakeHttpRequest<MakeOrderResponse>(
+                GetFullUrl($"/checkout/orders"),
+                true,
+                HttpMethod.Post,
+                order,
+                null
+                );
         }
 
         /// <summary>
@@ -141,9 +149,33 @@ namespace BankOfGeorgia.IpayClient
                 );
         }
 
+        private Task<TResult> MakeHttpRequest<TResult>(string url, bool useJwtAuth, HttpMethod method, object jsonPostPayload = null, Action<HttpClient> processClient = null)
+        {
+            using var requestMessage = new HttpRequestMessage(method, url);
+            if (jsonPostPayload != null)
+            {
+                var serializedPayload = JsonConvert.SerializeObject(jsonPostPayload);
+                requestMessage.Content = new StringContent(serializedPayload, Encoding.UTF8, "application/json");
+            };
 
+            return MakeHttpRequest<TResult>(useJwtAuth, method, requestMessage, processClient);
+        }
 
-        private async Task<TResult> MakeHttpRequest<TResult>(string url, bool useJwtAuth, HttpMethod method, IEnumerable<KeyValuePair<string, string>> postPayload = null, Action<HttpClient> processClient = null)
+        private Task<TResult> MakeHttpRequest<TResult>(string url, bool useJwtAuth, HttpMethod method, IEnumerable<KeyValuePair<string, string>> urlEncodedPostPayload = null, Action<HttpClient> processClient = null)
+        {
+            using var requestMessage = new HttpRequestMessage(method, url);
+            if (urlEncodedPostPayload != null)
+            {
+                requestMessage.Content = new FormUrlEncodedContent(
+                    urlEncodedPostPayload
+                        .Where(i => i.Value != null)
+                    );
+            };
+
+            return MakeHttpRequest<TResult>(useJwtAuth, method, requestMessage, processClient);
+        }
+
+        private async Task<TResult> MakeHttpRequest<TResult>(bool useJwtAuth, HttpMethod method, HttpRequestMessage requestMessage, Action<HttpClient> processClient = null)
         {
             using var httpClient = new HttpClient();
 
@@ -154,15 +186,6 @@ namespace BankOfGeorgia.IpayClient
             }
 
             processClient?.Invoke(httpClient);
-
-            using var requestMessage = new HttpRequestMessage(method, url);
-            if (postPayload != null)
-            {
-                requestMessage.Content = new FormUrlEncodedContent(
-                    postPayload
-                        .Where(i => i.Value != null)
-                    );
-            };
 
             using var httpResponseMessage = await httpClient.SendAsync(requestMessage);
 
