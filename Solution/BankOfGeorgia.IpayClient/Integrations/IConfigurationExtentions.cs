@@ -7,7 +7,7 @@ namespace Microsoft.Extensions.Configuration
 {
     public static class IConfigurationExtentions
     {
-        public static BankOfGeorgiaIpayClientOptions GetTbcBankEcommerceOptions(this IConfiguration configuration, string key)
+        public static BankOfGeorgiaIpayClientOptions GetBankOfGeorgiaIpayClientOptions(this IConfiguration configuration, string key)
         {
             var configurationSection = configuration
                 .GetSection(key);
