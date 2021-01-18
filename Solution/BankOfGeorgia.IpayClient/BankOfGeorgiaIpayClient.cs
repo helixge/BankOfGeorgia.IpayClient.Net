@@ -30,6 +30,7 @@ namespace BankOfGeorgia.IpayClient
         /// Endpoint: /oauth2/token
         /// </summary>
         /// <returns></returns>
+        /// <exception cref="IpayClientAuthenticationException">Thrown when auhentication fails</exception>
         public async Task AuthenticateAsync()
         {
             var authenticationString = $"{_options.ClientId}:{_options.SecretKey}";
@@ -46,7 +47,13 @@ namespace BankOfGeorgia.IpayClient
                 client => client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64EncodedAuthenticationString)
                 );
 
-            _jwtToken = result.access_token;
+            if (result.IsError)
+                throw new IpayClientAuthenticationException(result);
+
+            if (String.IsNullOrWhiteSpace(result.AccessToken))
+                throw new IpayClientAuthenticationException(result);
+
+            _jwtToken = result.AccessToken;
         }
 
         /// <summary>
@@ -86,9 +93,9 @@ namespace BankOfGeorgia.IpayClient
         /// Endpoint: /checkout/refund
         /// </summary>
         /// <returns></returns>
-        public Task RefundAsync(string orderId, decimal? amount = null)
+        public Task<ServiceResponse> RefundAsync(string orderId, decimal? amount = null)
         {
-            return MakeHttpRequest<object>(
+            return MakeHttpRequest<ServiceResponse>(
                 GetFullUrl("/checkout/refund"),
                 true,
                 HttpMethod.Post,
@@ -122,7 +129,7 @@ namespace BankOfGeorgia.IpayClient
         /// Endpoint: /checkout/orders/status/{order_id}
         /// </summary>
         /// <returns></returns>
-        public Task GetOrderStatusAsync(string orderId)
+        public Task<GetOrderDetailsResponse> GetOrderStatusAsync(string orderId)
         {
             return MakeHttpRequest<GetOrderDetailsResponse>(
                 GetFullUrl($"/checkout/status/{orderId}"),
@@ -149,9 +156,13 @@ namespace BankOfGeorgia.IpayClient
                 );
         }
 
+
+
         private Task<TResult> MakeHttpRequest<TResult>(string url, bool useJwtAuth, HttpMethod method, object jsonPostPayload = null, Action<HttpClient> processClient = null)
+            where TResult : ServiceResponse, new()
         {
-            using var requestMessage = new HttpRequestMessage(method, url);
+            var requestMessage = new HttpRequestMessage(method, url);
+
             if (jsonPostPayload != null)
             {
                 var serializedPayload = JsonConvert.SerializeObject(jsonPostPayload);
@@ -159,47 +170,55 @@ namespace BankOfGeorgia.IpayClient
             };
 
             return MakeHttpRequest<TResult>(useJwtAuth, method, requestMessage, processClient);
+
         }
 
         private Task<TResult> MakeHttpRequest<TResult>(string url, bool useJwtAuth, HttpMethod method, IEnumerable<KeyValuePair<string, string>> urlEncodedPostPayload = null, Action<HttpClient> processClient = null)
+            where TResult : ServiceResponse, new()
         {
-            using var requestMessage = new HttpRequestMessage(method, url);
-            if (urlEncodedPostPayload != null)
-            {
-                requestMessage.Content = new FormUrlEncodedContent(
-                    urlEncodedPostPayload
-                        .Where(i => i.Value != null)
-                    );
-            };
+            var requestMessage = new HttpRequestMessage(method, url);
+
+            var keyValuePairs = urlEncodedPostPayload
+                ?.Where(i => i.Value != null);
+            requestMessage.Content = new FormUrlEncodedContent(keyValuePairs);
 
             return MakeHttpRequest<TResult>(useJwtAuth, method, requestMessage, processClient);
         }
 
         private async Task<TResult> MakeHttpRequest<TResult>(bool useJwtAuth, HttpMethod method, HttpRequestMessage requestMessage, Action<HttpClient> processClient = null)
+            where TResult : ServiceResponse, new()
         {
-            using var httpClient = new HttpClient();
-
-            if (useJwtAuth)
-            {
-                await AuthenticateIfRequired();
-                httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + _jwtToken);
-            }
-
-            processClient?.Invoke(httpClient);
-
-            using var httpResponseMessage = await httpClient.SendAsync(requestMessage);
-
-            var responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
             try
             {
-                httpResponseMessage.EnsureSuccessStatusCode();
+                var httpClient = new HttpClient();
+
+                if (useJwtAuth)
+                {
+                    await AuthenticateIfRequired();
+                    httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + _jwtToken);
+                }
+
+                processClient?.Invoke(httpClient);
+
+                using var httpResponseMessage = await httpClient.SendAsync(requestMessage);
+
+                var responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
+
+                var result = JsonConvert.DeserializeObject<TResult>(responseContent);
+                result.RawResponse = responseContent;
+                result.HttpStatusCode = (int)httpResponseMessage.StatusCode;
+                result.IsError = !httpResponseMessage.IsSuccessStatusCode;
+
+                return result;
             }
             catch (Exception ex)
             {
-                throw new Exception($"HTTP request failed with the following response content: responseContent", ex);
+                return new TResult()
+                {
+                    IsError = true,
+                    Exception = ex
+                };
             }
-
-            return JsonConvert.DeserializeObject<TResult>(responseContent);
         }
 
         private async Task AuthenticateIfRequired()

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace BankOfGeorgia.IpayClient
 {
-    public class CompletePreAuthPaymentResponse : BaseResponse
+    public class CompletePreAuthPaymentResponse : ServiceResponse
     {
         public string Status { get; set; }
         public string Description { get; set; }

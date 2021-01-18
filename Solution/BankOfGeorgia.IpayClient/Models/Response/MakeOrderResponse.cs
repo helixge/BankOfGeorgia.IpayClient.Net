@@ -4,7 +4,7 @@ using System.Text;
 
 namespace BankOfGeorgia.IpayClient
 {
-    public class MakeOrderResponse : BaseResponse
+    public class MakeOrderResponse : ServiceResponse
     {
         public string Status { get; set; }
         public string PaymentHash { get; set; }

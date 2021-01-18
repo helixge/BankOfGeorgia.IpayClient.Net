@@ -4,7 +4,7 @@ using System.Text;
 
 namespace BankOfGeorgia.IpayClient
 {
-    public class GetOrderDetailsResponse : BaseResponse
+    public class GetOrderDetailsResponse : ServiceResponse
     {
         public string OrderId { get; set; }
         public Intent Intent { get; set; }

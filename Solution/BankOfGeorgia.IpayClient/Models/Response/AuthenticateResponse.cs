@@ -1,17 +1,25 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace BankOfGeorgia.IpayClient
 {
-    public class AuthenticateResponse : BaseResponse
+    public class AuthenticateResponse : ServiceResponse
     {
-        public string access_token { get; set; }
-        public string token_type { get; set; }
-        public string app_id { get; set; }
+        [JsonProperty("access_token")]
+        public string AccessToken { get; set; }
+
+        [JsonProperty("token_type")]
+        public string TokenType { get; set; }
+
+        [JsonProperty("app_id")]
+        public string AppId { get; set; }
+
         /// <summary>
         /// Epoch milliseconds
         /// </summary>
-        public long expires_in { get; set; }
+        [JsonProperty("expires_in")]
+        public long ExpiresIn { get; set; }
     }
 }

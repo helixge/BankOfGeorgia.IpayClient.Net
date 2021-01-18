@@ -1,6 +1,6 @@
 ﻿namespace BankOfGeorgia.IpayClient
 {
-    public class GetPaymentDetailsResponse : BaseResponse
+    public class GetPaymentDetailsResponse : ServiceResponse
     {
         public PaymentStatus Status { get; set; }
         public string Pan { get; set; }
