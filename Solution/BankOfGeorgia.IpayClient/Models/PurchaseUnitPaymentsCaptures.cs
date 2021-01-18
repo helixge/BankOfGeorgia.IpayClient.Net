@@ -1,10 +1,19 @@
-﻿namespace BankOfGeorgia.IpayClient
+﻿using Newtonsoft.Json;
+
+namespace BankOfGeorgia.IpayClient
 {
-    public class PurchaseUnitPaymentsCaptures
+    public class CheckPurchaseUnitPaymentsCaptures
     {
+        [JsonProperty("id")]
         public string Id { get; set; }
+     
+        [JsonProperty("description")]
         public string Description { get; set; }
+        
+        [JsonProperty("quantity")]
         public int Quantity { get; set; }
-        public PurchaseUnitAmount Amount { get; set; }
+        
+        [JsonProperty("amount")]
+        public CheckPurchaseUnitAmount Amount { get; set; }
     }
 }

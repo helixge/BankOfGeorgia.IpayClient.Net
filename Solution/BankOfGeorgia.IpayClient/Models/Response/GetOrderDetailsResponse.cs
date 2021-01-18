@@ -8,6 +8,6 @@ namespace BankOfGeorgia.IpayClient
     {
         public string OrderId { get; set; }
         public Intent Intent { get; set; }
-        public IEnumerable<PurchaseUnit> PurchaseUnits { get; set; }
+        public IEnumerable<CheckPurchaseUnit> PurchaseUnits { get; set; }
     }
 }

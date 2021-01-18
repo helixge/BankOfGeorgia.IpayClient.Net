@@ -1,17 +1,22 @@
-﻿namespace BankOfGeorgia.IpayClient
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System.Runtime.Serialization;
+
+namespace BankOfGeorgia.IpayClient
 {
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum CardType
     {
-        //MC
+        [EnumMember(Value = "MC")]
         MC,
 
-        //VISA
+        [EnumMember(Value = "VISA")]
         Visa,
 
-        //AMEX
+        [EnumMember(Value = "AMEX")]
         Amex,
 
-        //UNKNOWN
+        [EnumMember(Value = "UNKNOWN")]
         Unknown
     }
 }

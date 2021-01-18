@@ -5,7 +5,7 @@
         public PaymentStatus Status { get; set; }
         public string Pan { get; set; }
         public string OrderId { get; set; }
-        public PreAuthStatus PreAuthStatus { get; set; }
+        //public PreAuthStatus PreAuthStatus { get; set; }
         public string PaymentHash { get; set; }
         public string IpayPaymentId { get; set; }
         public StatusDescription StatusDescription { get; set; }
