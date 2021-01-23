@@ -15,7 +15,7 @@ namespace BankOfGeorgia.IpayClient
     public class BankOfGeorgiaIpayClient
     {
         private readonly BankOfGeorgiaIpayClientOptions _options;
-        private string _jwtToken = null;
+        private string _accessToken = null;
 
         public BankOfGeorgiaIpayClient(
             BankOfGeorgiaIpayClientOptions options
@@ -52,7 +52,7 @@ namespace BankOfGeorgia.IpayClient
             if (String.IsNullOrWhiteSpace(result.AccessToken))
                 throw new IpayClientAuthenticationException(result);
 
-            _jwtToken = result.AccessToken;
+            _accessToken = result.AccessToken;
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace BankOfGeorgia.IpayClient
                 if (useJwtAuth)
                 {
                     await AuthenticateIfRequired();
-                    httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + _jwtToken);
+                    httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + _accessToken);
                 }
 
                 processClient?.Invoke(httpClient);
@@ -221,10 +221,10 @@ namespace BankOfGeorgia.IpayClient
 
         private async Task AuthenticateIfRequired()
         {
-            if (_jwtToken == null)
+            if (_accessToken == null)
                 await AuthenticateAsync();
 
-            if (!JwtHelper.IsTokenValid(_jwtToken))
+            if (!JwtHelper.IsTokenValid(_accessToken))
                 await AuthenticateAsync();
         }
 
