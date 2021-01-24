@@ -59,15 +59,24 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="F:BankOfGeorgia.IpayClient.CaptureMethod.Manual">
+        <member name="F:BankOfGeorgia.IpayClient.CaptureMethod.Automatic">
             <summary>
-            Amount is placed on hold and removed from available balance immediately.After that, you will need to complete pre-authorization by calling pre-auth/complete or unblock amount by calling refund. If you do not call one of these methods, the amount is automatically unlocked after 30 days.
+            Amount is charged immediately and there is no need to call pre-auth/complete method.
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "F:BankOfGeorgia.IpayClient.Intent.Capture" -->
+        <member name="F:BankOfGeorgia.IpayClient.CaptureMethod.Manual">
+            <summary>
+            Amount is placed on hold and removed from available balance immediately. After that, you will need to complete pre-authorization by calling pre-auth/complete or unblock amount by calling refund. If you do not call one of these methods, the amount is automatically unlocked after 30 days.
+            </summary>
+        </member>
+        <member name="F:BankOfGeorgia.IpayClient.Intent.Capture">
+            <summary>
+            Provides several payment options for users, on the same page. Payment can be performed by card and with BOG digital credentials ( username &amp; password )
+            </summary>
+        </member>
         <member name="F:BankOfGeorgia.IpayClient.Intent.Authorize">
             <summary>
-            Allows users to pay only with entering card details
+            Allows users to pay ONLY with entering card details
             </summary>
         </member>
         <member name="F:BankOfGeorgia.IpayClient.Intent.Loan">
@@ -75,12 +84,49 @@
              Users can pay with only installment option. For this user should enter BOG credentials, username / password and go through installment payment process. LOAN minimum amount is 50 GEL and maximum amount is 4900 GEL
             </summary>
         </member>
-        <member name="P:BankOfGeorgia.IpayClient.OrderItem.Amount">
+        <member name="P:BankOfGeorgia.IpayClient.IpayOrderItem.Amount">
             <summary>
             Amount in GEL
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "P:BankOfGeorgia.IpayClient.IpayOrder.Intent" -->
+        <member name="P:BankOfGeorgia.IpayClient.IpayOrderItem.Description">
+            <summary>
+            Product description
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.IpayOrderItem.Quantity">
+            <summary>
+            Product quantity
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.IpayOrderItem.ProductId">
+            <summary>
+            Product unique identifier in the store
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.OrderRequestPurchaseUnit.Amount">
+            <summary>
+            Purchase unit amount entry
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.OrderRequestPurchaseUnitAmount.Currency">
+            <summary>
+            Purchase unit currency
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.OrderRequestPurchaseUnitAmount.Value">
+            <summary>
+            Purchase unit value
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.IpayOrder.Intent">
+            <summary>
+            Intent is responsible for the payment method of the interface of the page that the user sees after the iPay transition.
+            CAPTURE - provides several payment options for users, on the same page. Payment can be performed by card and with BOG digital credentials ( username &amp; password ).
+            AUTHORIZE - Allows users to pay only with entering card details.
+            LOAN - users can pay with only installment option. For this user should enter BOG credentials, username / password and go through installment payment process. LOAN minimum amount is 50 GEL and maximum amount is 4900 GEL
+            </summary>
+        </member>
         <member name="P:BankOfGeorgia.IpayClient.IpayOrder.Items">
             <summary>
             Products
@@ -88,8 +134,8 @@
         </member>
         <member name="P:BankOfGeorgia.IpayClient.IpayOrder.Locale">
             <summary>
-            Localization on which ipay.ge payment page will be displayed. Defaulted to ka if not provided or invalid.
-            Available values: "ka" "en-US"
+            Localization on which ipay.ge payment page will be displayed. Defaulted to "ka" if not provided or invalid.
+            Available values: "ka", "en-US"
             </summary>
         </member>
         <member name="P:BankOfGeorgia.IpayClient.IpayOrder.RedirectUrl">

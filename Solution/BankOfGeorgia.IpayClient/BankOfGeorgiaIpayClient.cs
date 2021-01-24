@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +16,16 @@ namespace BankOfGeorgia.IpayClient
     public class BankOfGeorgiaIpayClient
     {
         private readonly BankOfGeorgiaIpayClientOptions _options;
+        private readonly ILogger<BankOfGeorgiaIpayClient> _logger;
         private string _accessToken = null;
 
         public BankOfGeorgiaIpayClient(
-            BankOfGeorgiaIpayClientOptions options
+            BankOfGeorgiaIpayClientOptions options,
+            ILogger<BankOfGeorgiaIpayClient> logger
             )
         {
             _options = options;
+            _logger = logger;
         }
 
         /// <summary>
@@ -34,6 +38,9 @@ namespace BankOfGeorgia.IpayClient
         {
             var authenticationString = $"{_options.ClientId}:{_options.SecretKey}";
             var base64EncodedAuthenticationString = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes(authenticationString));
+
+            _logger.LogInformation($"Access token Request UTC now: {DateTimeOffset.UtcNow}");
+            _logger.LogInformation($"Access token Request now: {DateTimeOffset.Now}");
 
             var result = await MakeHttpRequest<AuthenticateResponse>(
                 GetFullUrl("/oauth2/token"),
@@ -53,6 +60,8 @@ namespace BankOfGeorgia.IpayClient
                 throw new IpayClientAuthenticationException(result);
 
             _accessToken = result.AccessToken;
+
+            _logger.LogInformation($"Access token: {_accessToken}");
         }
 
         /// <summary>
@@ -165,7 +174,7 @@ namespace BankOfGeorgia.IpayClient
             {
                 var serializedPayload = JsonConvert.SerializeObject(jsonPostPayload);
                 requestMessage.Content = new StringContent(serializedPayload, Encoding.UTF8, "application/json");
-            };
+            }
 
             return MakeHttpRequest<TResult>(useJwtAuth, method, requestMessage, processClient);
 

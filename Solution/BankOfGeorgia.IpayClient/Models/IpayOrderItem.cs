@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
 
 namespace BankOfGeorgia.IpayClient
 {
@@ -42,32 +41,6 @@ namespace BankOfGeorgia.IpayClient
             Description = description;
             Quantity = quantity;
             ProductId = productId;
-        }
-    }
-
-    internal class SerializeDecimaAsStringJsonConverter : JsonConverter
-    {
-        public override bool CanConvert(Type objectType)
-        {
-            return objectType == typeof(decimal);
-        }
-
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            //JsonSerializer innerSerializer = new JsonSerializer();
-            //innerSerializer.ContractResolver = exclusionResolver;
-            //// (copy other settings from the outer serializer if needed)
-
-            //var o = JObject.FromObject(value, innerSerializer);
-
-            //// ...do your custom stuff here...
-
-            //o.WriteTo(writer);
-        }
-
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            throw new NotImplementedException();
         }
     }
 }

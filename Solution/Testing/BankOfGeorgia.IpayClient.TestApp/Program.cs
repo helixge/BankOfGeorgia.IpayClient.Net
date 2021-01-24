@@ -1,6 +1,8 @@
 ﻿using JWT.Algorithms;
 using JWT.Builder;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,37 +20,51 @@ namespace BankOfGeorgia.IpayClient.TestApp
 
         private static async Task TestTransactionProcessing()
         {
-            BankOfGeorgiaIpayClient client = CreateClient();
-
-            //await client.AuthenticateAsync();
-            var automaticCaptureOrderResult = await client.MakeOrderAsync(new IpayOrder()
+            using (var scope = CreateServiceProvider().CreateScope())
             {
-                CaptureMethod = CaptureMethod.Automatic,
-                Intent = Intent.Authorize,
-                Items = new[]
-                {
-                    new IpayOrderItem(amount: 1.7m, description: "First product", quantity: 1, productId: "P001"),
-                    new IpayOrderItem(amount: 2.5m, description: "Second product", quantity: 3, productId: "P002")
-                },
-                RedirectUrl = "https://mystore.ge/api/ipayreturn",
-                ShopOrderId = "Order-001",
-                ShowShopOrderIdOnExtract = true,
-                PurchaseUnits = new[]
-                {
-                    new OrderRequestPurchaseUnit(currency: Currency.GEL, value: 1.7m),
-                    new OrderRequestPurchaseUnit(currency: Currency.GEL, value: 2.5m)
-                }
-            });
+                BankOfGeorgiaIpayClient client = scope.ServiceProvider
+                    .GetRequiredService<BankOfGeorgiaIpayClient>();
+
+                await client.AuthenticateAsync();
+                //var automaticCaptureOrderResult = await client.MakeOrderAsync(new IpayOrder()
+                //{
+                //    CaptureMethod = CaptureMethod.Automatic,
+                //    Intent = Intent.Authorize,
+                //    Items = new[]
+                //    {
+                //        new IpayOrderItem(amount: 1.7m, description: "First product", quantity: 1, productId: "P001"),
+                //        new IpayOrderItem(amount: 2.5m, description: "Second product", quantity: 3, productId: "P002")
+                //    },
+                //    RedirectUrl = "https://mystore.ge/api/ipayreturn",
+                //    ShopOrderId = "Order-001",
+                //    ShowShopOrderIdOnExtract = true,
+                //    PurchaseUnits = new[]
+                //    {
+                //        new OrderRequestPurchaseUnit(currency: Currency.GEL, value: 1.7m),
+                //        new OrderRequestPurchaseUnit(currency: Currency.GEL, value: 2.5m)
+                //    }
+                //});
+            }
         }
 
-        private static BankOfGeorgiaIpayClient CreateClient()
+        private static ServiceProvider CreateServiceProvider()
         {
             var config = new ConfigurationBuilder()
                 .AddUserSecrets<Program>()
                 .Build();
             var options = config.GetBankOfGeorgiaIpayClientOptions("iPay");
-            var client = new BankOfGeorgiaIpayClient(options);
-            return client;
+
+            var services = new ServiceCollection();
+            services
+                .AddLogging(loggerBuilder =>
+                {
+                    loggerBuilder.ClearProviders();
+                    loggerBuilder.AddConsole();
+                })
+                .AddBankOfGeorgiaIpay(options)
+                ;
+
+            return services.BuildServiceProvider();
         }
 
         private static void TestJsonExpirationValidation()
