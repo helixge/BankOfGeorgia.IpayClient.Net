@@ -25,25 +25,26 @@ namespace BankOfGeorgia.IpayClient.TestApp
                 BankOfGeorgiaIpayClient client = scope.ServiceProvider
                     .GetRequiredService<BankOfGeorgiaIpayClient>();
 
-                await client.AuthenticateAsync();
-                //var automaticCaptureOrderResult = await client.MakeOrderAsync(new IpayOrder()
-                //{
-                //    CaptureMethod = CaptureMethod.Automatic,
-                //    Intent = Intent.Authorize,
-                //    Items = new[]
-                //    {
-                //        new IpayOrderItem(amount: 1.7m, description: "First product", quantity: 1, productId: "P001"),
-                //        new IpayOrderItem(amount: 2.5m, description: "Second product", quantity: 3, productId: "P002")
-                //    },
-                //    RedirectUrl = "https://mystore.ge/api/ipayreturn",
-                //    ShopOrderId = "Order-001",
-                //    ShowShopOrderIdOnExtract = true,
-                //    PurchaseUnits = new[]
-                //    {
-                //        new OrderRequestPurchaseUnit(currency: Currency.GEL, value: 1.7m),
-                //        new OrderRequestPurchaseUnit(currency: Currency.GEL, value: 2.5m)
-                //    }
-                //});
+                //await client.AuthenticateAsync();
+                var automaticCaptureOrderResult = await client.MakeOrderAsync(new IpayOrder()
+                {
+                    CaptureMethod = CaptureMethod.Automatic,
+                    Intent = Intent.Authorize,
+                    Items = new[]
+                    {
+                        new IpayOrderItem(amount: 1.7m, description: "First product", quantity: 1, productId: "P001"),
+                        new IpayOrderItem(amount: 2.5m, description: "Second product", quantity: 3, productId: "P002")
+                    },
+                    RedirectUrl = "https://mystore.ge/api/ipayreturn",
+                    ShopOrderId = Guid.NewGuid().ToString("N"),
+                    ShowShopOrderIdOnExtract = true,
+                    PurchaseUnits = new[]
+                    {
+                        new OrderRequestPurchaseUnit(currency: Currency.GEL, value: 1.7m),
+                        new OrderRequestPurchaseUnit(currency: Currency.GEL, value: 2.5m)
+                    }
+                });
+                var automaticCaptureOrderResultRedirectUrl = automaticCaptureOrderResult.GetRedirectUrl();
             }
         }
 

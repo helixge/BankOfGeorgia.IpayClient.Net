@@ -16,7 +16,7 @@ namespace Microsoft.Extensions.Configuration
                 .Get<BankOfGeorgiaIpayClientOptions>();
 
             if (options == null)
-                throw new BankOfGeorgiaIpayClientConfigurationException($"Bank of Georgia iPay configuration not found with key: {key}");
+                throw new IpayClientConfigurationException($"Bank of Georgia iPay configuration not found with key: {key}");
 
             return options;
         }

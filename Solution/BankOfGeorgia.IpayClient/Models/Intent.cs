@@ -4,6 +4,9 @@ using System.Runtime.Serialization;
 
 namespace BankOfGeorgia.IpayClient
 {
+    /// <summary>
+    /// What type of payment page should be displayed
+    /// </summary>
     [JsonConverter(typeof(StringEnumConverter))]
     public enum Intent
     {

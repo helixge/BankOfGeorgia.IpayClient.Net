@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace BankOfGeorgia.IpayClient
@@ -9,7 +10,7 @@ namespace BankOfGeorgia.IpayClient
     {
         [JsonProperty("status")]
         public string Status { get; set; }
-        
+
         [JsonProperty("payment_hash")]
         public string PaymentHash { get; set; }
 
@@ -18,6 +19,25 @@ namespace BankOfGeorgia.IpayClient
 
         [JsonProperty("order_id")]
         public string OrderId { get; set; }
+
+        /// <summary>
+        /// Get redirect URL to navigate the client to after succesfully registering transaction
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="IpayOrderException">Thrown when Links is null or redirect link not found</exception>
+        public string GetRedirectUrl()
+        {
+            if (Links == null)
+                throw new IpayOrderException("Links value is null");
+
+            var redirectLink = Links
+                .FirstOrDefault(l => l.Method == "REDIRECT")
+                ?.Href;
+            if (redirectLink == null)
+                throw new IpayOrderException("Links value is null");
+
+            return redirectLink;
+        }
     }
 
     public class Link

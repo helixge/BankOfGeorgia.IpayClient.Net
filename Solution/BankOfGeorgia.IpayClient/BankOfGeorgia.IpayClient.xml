@@ -69,6 +69,11 @@
             Amount is placed on hold and removed from available balance immediately. After that, you will need to complete pre-authorization by calling pre-auth/complete or unblock amount by calling refund. If you do not call one of these methods, the amount is automatically unlocked after 30 days.
             </summary>
         </member>
+        <member name="T:BankOfGeorgia.IpayClient.Intent">
+            <summary>
+            What type of payment page should be displayed
+            </summary>
+        </member>
         <member name="F:BankOfGeorgia.IpayClient.Intent.Capture">
             <summary>
             Provides several payment options for users, on the same page. Payment can be performed by card and with BOG digital credentials ( username &amp; password )
@@ -167,6 +172,13 @@
             <summary>
             Epoch milliseconds
             </summary>
+        </member>
+        <member name="M:BankOfGeorgia.IpayClient.MakeOrderResponse.GetRedirectUrl">
+            <summary>
+            Get redirect URL to navigate the client to after succesfully registering transaction
+            </summary>
+            <returns></returns>
+            <exception cref="T:BankOfGeorgia.IpayClient.IpayOrderException">Thrown when Links is null or redirect link not found</exception>
         </member>
     </members>
 </doc>
