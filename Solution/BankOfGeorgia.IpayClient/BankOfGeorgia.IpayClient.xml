@@ -180,5 +180,27 @@
             <returns></returns>
             <exception cref="T:BankOfGeorgia.IpayClient.IpayOrderException">Thrown when Links is null or redirect link not found</exception>
         </member>
+        <member name="T:Microsoft.Extensions.DependencyInjection.IServiceCollectionExtentions">
+            <summary>
+            ASP.NET Core service collection extentions for service configuration
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.IServiceCollectionExtentions.AddBankOfGeorgiaIpay(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration,System.String)">
+            <summary>
+            Add services required for iPay
+            </summary>
+            <param name="services"></param>
+            <param name="configuration"></param>
+            <param name="settingsKey"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.IServiceCollectionExtentions.AddBankOfGeorgiaIpay(Microsoft.Extensions.DependencyInjection.IServiceCollection,BankOfGeorgia.IpayClient.BankOfGeorgiaIpayClientOptions)">
+            <summary>
+            Add services required for iPay
+            </summary>
+            <param name="services"></param>
+            <param name="options"></param>
+            <returns></returns>
+        </member>
     </members>
 </doc>

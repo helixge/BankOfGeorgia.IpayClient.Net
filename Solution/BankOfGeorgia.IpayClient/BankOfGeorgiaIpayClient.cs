@@ -16,15 +16,20 @@ namespace BankOfGeorgia.IpayClient
     public class BankOfGeorgiaIpayClient
     {
         private readonly BankOfGeorgiaIpayClientOptions _options;
+        private readonly HttpClient _httpClient;
         private readonly ILogger<BankOfGeorgiaIpayClient> _logger;
         private string _accessToken = null;
 
+        public string AccessToken => _accessToken;
+
         public BankOfGeorgiaIpayClient(
             BankOfGeorgiaIpayClientOptions options,
+            HttpClient httpClient,
             ILogger<BankOfGeorgiaIpayClient> logger
             )
         {
             _options = options;
+            _httpClient = httpClient;
             _logger = logger;
         }
 
@@ -39,9 +44,6 @@ namespace BankOfGeorgia.IpayClient
             var authenticationString = $"{_options.ClientId}:{_options.SecretKey}";
             var base64EncodedAuthenticationString = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes(authenticationString));
 
-            _logger.LogInformation($"Access token Request UTC now: {DateTimeOffset.UtcNow}");
-            _logger.LogInformation($"Access token Request now: {DateTimeOffset.Now}");
-
             var result = await MakeHttpRequest<AuthenticateResponse>(
                 GetFullUrl("/oauth2/token"),
                 false,
@@ -50,7 +52,7 @@ namespace BankOfGeorgia.IpayClient
                 {
                     { "grant_type", "client_credentials" }
                 },
-                client => client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64EncodedAuthenticationString)
+                requestMessage => requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Basic", base64EncodedAuthenticationString)
                 );
 
             if (result.IsError)
@@ -60,8 +62,6 @@ namespace BankOfGeorgia.IpayClient
                 throw new IpayClientAuthenticationException(result);
 
             _accessToken = result.AccessToken;
-
-            _logger.LogInformation($"Access token: {_accessToken}");
         }
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace BankOfGeorgia.IpayClient
         }
 
 
-        private Task<TResult> MakeHttpRequest<TResult>(string url, bool useJwtAuth, HttpMethod method, object jsonPostPayload = null, Action<HttpClient> processClient = null)
+        private Task<TResult> MakeHttpRequest<TResult>(string url, bool useJwtAuth, HttpMethod method, object jsonPostPayload = null, Action<HttpRequestMessage> processRequestMessage = null)
             where TResult : ServiceResponse, new()
         {
             var requestMessage = new HttpRequestMessage(method, url);
@@ -176,11 +176,11 @@ namespace BankOfGeorgia.IpayClient
                 requestMessage.Content = new StringContent(serializedPayload, Encoding.UTF8, "application/json");
             }
 
-            return MakeHttpRequest<TResult>(useJwtAuth, method, requestMessage, processClient);
+            return MakeHttpRequest<TResult>(useJwtAuth, method, requestMessage, processRequestMessage);
 
         }
 
-        private Task<TResult> MakeHttpRequest<TResult>(string url, bool useJwtAuth, HttpMethod method, IEnumerable<KeyValuePair<string, string>> urlEncodedPostPayload = null, Action<HttpClient> processClient = null)
+        private Task<TResult> MakeHttpRequest<TResult>(string url, bool useJwtAuth, HttpMethod method, IEnumerable<KeyValuePair<string, string>> urlEncodedPostPayload = null, Action<HttpRequestMessage> processRequestMessage = null)
             where TResult : ServiceResponse, new()
         {
             var requestMessage = new HttpRequestMessage(method, url);
@@ -189,25 +189,23 @@ namespace BankOfGeorgia.IpayClient
                 ?.Where(i => i.Value != null);
             requestMessage.Content = new FormUrlEncodedContent(keyValuePairs);
 
-            return MakeHttpRequest<TResult>(useJwtAuth, method, requestMessage, processClient);
+            return MakeHttpRequest<TResult>(useJwtAuth, method, requestMessage, processRequestMessage);
         }
 
-        private async Task<TResult> MakeHttpRequest<TResult>(bool useJwtAuth, HttpMethod method, HttpRequestMessage requestMessage, Action<HttpClient> processClient = null)
+        private async Task<TResult> MakeHttpRequest<TResult>(bool useJwtAuth, HttpMethod method, HttpRequestMessage requestMessage, Action<HttpRequestMessage> processRequestMessage = null)
             where TResult : ServiceResponse, new()
         {
             try
             {
-                var httpClient = new HttpClient();
-
                 if (useJwtAuth)
                 {
                     await AuthenticateIfRequired();
-                    httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + _accessToken);
+                    requestMessage.Headers.Add("Authorization", "Bearer " + _accessToken);
                 }
 
-                processClient?.Invoke(httpClient);
+                processRequestMessage?.Invoke(requestMessage);
 
-                using var httpResponseMessage = await httpClient.SendAsync(requestMessage);
+                using var httpResponseMessage = await _httpClient.SendAsync(requestMessage);
 
                 var responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
 

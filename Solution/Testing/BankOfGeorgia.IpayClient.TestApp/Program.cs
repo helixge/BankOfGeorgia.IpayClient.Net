@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace BankOfGeorgia.IpayClient.TestApp
@@ -13,9 +14,29 @@ namespace BankOfGeorgia.IpayClient.TestApp
     {
         static async Task Main(string[] args)
         {
-            TestJsonExpirationValidation();
+            //TestJsonExpirationValidation();
 
-            await TestTransactionProcessing();
+            await TestInjectionScopeAuthToken();
+            //await TestTransactionProcessing();
+        }
+
+        private static async Task TestInjectionScopeAuthToken()
+        {
+            using var serviceProvider = CreateServiceProvider();
+            using var scope1 = serviceProvider.CreateScope();
+            BankOfGeorgiaIpayClient client1 = scope1.ServiceProvider
+                .GetRequiredService<BankOfGeorgiaIpayClient>();
+
+            using var scope2 = serviceProvider.CreateScope();
+            BankOfGeorgiaIpayClient client2 = scope2.ServiceProvider
+                .GetRequiredService<BankOfGeorgiaIpayClient>();
+
+            await client1.AuthenticateAsync();
+            Thread.Sleep(2000);
+            await client2.AuthenticateAsync();
+
+            if (client1.AccessToken == client2.AccessToken)
+                throw new Exception("Clients share access token");
         }
 
         private static async Task TestTransactionProcessing()
@@ -65,7 +86,8 @@ namespace BankOfGeorgia.IpayClient.TestApp
                 .AddBankOfGeorgiaIpay(options)
                 ;
 
-            return services.BuildServiceProvider();
+            return services
+                .BuildServiceProvider();
         }
 
         private static void TestJsonExpirationValidation()
