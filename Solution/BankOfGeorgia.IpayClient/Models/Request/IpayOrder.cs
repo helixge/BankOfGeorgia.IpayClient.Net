@@ -9,7 +9,7 @@ namespace BankOfGeorgia.IpayClient
     {
         /// <summary>
         /// Intent is responsible for the payment method of the interface of the page that the user sees after the iPay transition.
-        /// CAPTURE - provides several payment options for users, on the same page. Payment can be performed by card and with BOG digital credentials ( username & password ).
+        /// CAPTURE - provides several payment options for users, on the same page. Payment can be performed by card and with BOG digital credentials ( username &amp; password ).
         /// AUTHORIZE - Allows users to pay only with entering card details.
         /// LOAN - users can pay with only installment option. For this user should enter BOG credentials, username / password and go through installment payment process. LOAN minimum amount is 50 GEL and maximum amount is 4900 GEL
         /// </summary>
@@ -20,11 +20,11 @@ namespace BankOfGeorgia.IpayClient
         /// Products
         /// </summary>
         [JsonProperty("items")]
-        public IEnumerable<OrderItem> Items { get; set; }
+        public IEnumerable<IpayOrderItem> Items { get; set; }
 
         /// <summary>
-        /// Localization on which ipay.ge payment page will be displayed. Defaulted to ka if not provided or invalid.
-        /// Available values: "ka" "en-US"
+        /// Localization on which ipay.ge payment page will be displayed. Defaulted to "ka" if not provided or invalid.
+        /// Available values: "ka", "en-US"
         /// </summary>
         [JsonProperty("locale")]
         public string Locale { get; set; }

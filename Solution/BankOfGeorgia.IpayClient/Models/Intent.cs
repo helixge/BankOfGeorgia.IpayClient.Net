@@ -8,13 +8,13 @@ namespace BankOfGeorgia.IpayClient
     public enum Intent
     {
         /// <summary>
-        /// Provides several payment options for users, on the same page. Payment can be performed by card and with BOG digital credentials ( username & password )
+        /// Provides several payment options for users, on the same page. Payment can be performed by card and with BOG digital credentials ( username &amp; password )
         /// </summary>
         [EnumMember(Value = "CAPTURE")]
         Capture,
 
         /// <summary>
-        /// Allows users to pay only with entering card details
+        /// Allows users to pay ONLY with entering card details
         /// </summary>
         [EnumMember(Value = "AUTHORIZE")]
         Authorize,
