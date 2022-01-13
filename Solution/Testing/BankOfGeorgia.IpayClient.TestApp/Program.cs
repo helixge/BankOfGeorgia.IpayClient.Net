@@ -17,7 +17,8 @@ namespace BankOfGeorgia.IpayClient.TestApp
             //TestJsonExpirationValidation();
 
             //await TestInjectionScopeAuthToken();
-            await TestTransactionProcessing();
+            //await TestTransactionProcessing();
+            await TestTrensactionStatusCheck("dedd4ff889002ce03870a2c3c188ed801cd742a2");
         }
 
         private static async Task TestTransactionProcessing()
@@ -93,6 +94,19 @@ namespace BankOfGeorgia.IpayClient.TestApp
         {
             var jwtToken = "eyJraWQiOiIxMDA2IiwiY3R5IjoiYXBwbGljYXRpb25cL2pzb24iLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQdWJsaWMgcGF5bWVudCBBUEkgVjEiLCJhdWQiOiJpUGF5IERlbW8iLCJpc3MiOiJodHRwczpcL1wvaXBheS5nZSIsImV4cCI6MTYwOTg2MDk4Mn0.ZBYmIz-tV_VktDFgKf5WsM-NsM8GDmpjn3fMHjYYyS8";
             var json = JwtHelper.IsTokenValid(jwtToken);
+        }
+
+        private static async Task TestTrensactionStatusCheck(string orderId)
+        {
+            using var provider = CreateServiceProvider();
+            using var scope = provider.CreateScope();
+
+            BankOfGeorgiaIpayClient client = scope.ServiceProvider
+                .GetRequiredService<BankOfGeorgiaIpayClient>();
+
+            GetOrderStatusResponse orderStatus = await client.GetOrderStatusAsync(orderId);
+            GetOrderDetailsResponse orderDetails = await client.GetOrderDetailsAsync(orderId);
+            GetPaymentDetailsResponse paymentDetails = await client.GetPaymentDetailsAsync(orderId);
         }
     }
 }
