@@ -7,6 +7,8 @@ namespace BankOfGeorgia.IpayClient
     [JsonConverter(typeof(StringEnumConverter))]
     public enum PaymentStatus
     {
+        None = 0,
+
         [EnumMember(Value = "success")]
         Success,
         
