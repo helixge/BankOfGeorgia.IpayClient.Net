@@ -19,7 +19,7 @@ namespace Example.WebApp
             services.AddControllersWithViews();
 
             services.AddBankOfGeorgiaIpay(
-                Configuration.GetBankOfGeorgiaIpayClientOptions("Bog")
+                Configuration.GetBankOfGeorgiaIpayClientOptions("iPay")
             );
         }
 

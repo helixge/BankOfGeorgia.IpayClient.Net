@@ -2,7 +2,7 @@
 
 namespace BankOfGeorgia.IpayClient
 {
-    public class CheckPurchaseUnitAmount
+    public class PurchaseUnitAmount
     {
         [JsonProperty("currency_code")]
         public string Currency { get; set; }

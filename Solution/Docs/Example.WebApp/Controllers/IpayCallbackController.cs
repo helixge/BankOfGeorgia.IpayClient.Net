@@ -18,12 +18,14 @@ namespace Example.WebApp.Controllers
         }
 
         [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> Payment([FromForm] PaymentCallbackResult result)
         {
             throw new NotImplementedException();
         }
 
         [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> Refund([FromForm] RefundCallbackResult result)
         {
             throw new NotImplementedException();

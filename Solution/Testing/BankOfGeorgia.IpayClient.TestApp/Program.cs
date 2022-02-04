@@ -18,7 +18,7 @@ namespace BankOfGeorgia.IpayClient.TestApp
 
             //await TestInjectionScopeAuthToken();
             //await TestTransactionProcessing();
-            await TestTrensactionStatusCheck("dedd4ff889002ce03870a2c3c188ed801cd742a2");
+            await TestTrensactionStatusCheck("56c1ffd2d42e202d3c7626a2b8ee0823b31dd506");
         }
 
         private static async Task TestTransactionProcessing()
@@ -104,8 +104,8 @@ namespace BankOfGeorgia.IpayClient.TestApp
             BankOfGeorgiaIpayClient client = scope.ServiceProvider
                 .GetRequiredService<BankOfGeorgiaIpayClient>();
 
-            GetOrderStatusResponse orderStatus = await client.GetOrderStatusAsync(orderId);
-            GetOrderDetailsResponse orderDetails = await client.GetOrderDetailsAsync(orderId);
+            //GetPaymentDetailsResponse orderStatus = await client.GetPaymentDetailsAsync(orderId);
+            //GetOrderDetailsResponse orderDetails = await client.GetOrderDetailsAsync(orderId);
             GetPaymentDetailsResponse paymentDetails = await client.GetPaymentDetailsAsync(orderId);
         }
     }

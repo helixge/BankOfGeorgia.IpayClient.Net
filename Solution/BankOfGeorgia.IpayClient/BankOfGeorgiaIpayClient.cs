@@ -116,37 +116,37 @@ namespace BankOfGeorgia.IpayClient
                 );
         }
 
-        /// <summary>
-        /// Check order details
-        /// Endpoint: /checkout/orders/{order_id}
-        /// </summary>
-        /// <returns></returns>
-        public Task<GetOrderDetailsResponse> GetOrderDetailsAsync(string orderId)
-        {
-            return MakeHttpRequest<GetOrderDetailsResponse>(
-                GetFullUrl($"/checkout/orders/{orderId}"),
-                true,
-                HttpMethod.Get,
-                null,
-                null
-                );
-        }
+        ///// <summary>
+        ///// Check order details
+        ///// Endpoint: /checkout/orders/{order_id}
+        ///// </summary>
+        ///// <returns></returns>
+        //public Task<GetOrderDetailsResponse> GetOrderDetailsAsync(string orderId)
+        //{
+        //    return MakeHttpRequest<GetOrderDetailsResponse>(
+        //        GetFullUrl($"/checkout/orders/{orderId}"),
+        //        true,
+        //        HttpMethod.Get,
+        //        null,
+        //        null
+        //        );
+        //}
 
-        /// <summary>
-        /// Check order status
-        /// Endpoint: /checkout/orders/status/{order_id}
-        /// </summary>
-        /// <returns></returns>
-        public Task<GetOrderDetailsResponse> GetOrderStatusAsync(string orderId)
-        {
-            return MakeHttpRequest<GetOrderDetailsResponse>(
-                GetFullUrl($"/checkout/status/{orderId}"),
-                true,
-                HttpMethod.Get,
-                null,
-                null
-                );
-        }
+        ///// <summary>
+        ///// Check order status
+        ///// Endpoint: /checkout/orders/status/{order_id}
+        ///// </summary>
+        ///// <returns></returns>
+        //public Task<GetOrderStatusResponse> GetOrderStatusAsync(string orderId)
+        //{
+        //    return MakeHttpRequest<GetOrderStatusResponse>(
+        //        GetFullUrl($"/checkout/payment/{orderId}"),
+        //        true,
+        //        HttpMethod.Get,
+        //        null,
+        //        null
+        //        );
+        //}
 
         /// <summary>
         /// /checkout/payment/{order_id}
@@ -185,9 +185,13 @@ namespace BankOfGeorgia.IpayClient
         {
             var requestMessage = new HttpRequestMessage(method, url);
 
-            var keyValuePairs = urlEncodedPostPayload
-                ?.Where(i => i.Value != null);
-            requestMessage.Content = new FormUrlEncodedContent(keyValuePairs);
+            if (urlEncodedPostPayload != null)
+            {
+                IEnumerable<KeyValuePair<string, string>> keyValuePairs = urlEncodedPostPayload
+                    .Where(i => i.Value != null);
+                
+                requestMessage.Content = new FormUrlEncodedContent(keyValuePairs);
+            }
 
             return MakeHttpRequest<TResult>(useJwtAuth, method, requestMessage, processRequestMessage);
         }

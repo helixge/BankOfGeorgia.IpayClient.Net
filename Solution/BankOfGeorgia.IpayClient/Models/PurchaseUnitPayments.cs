@@ -2,9 +2,9 @@
 
 namespace BankOfGeorgia.IpayClient
 {
-    public class CheckPurchaseUnitPayments
+    public class PurchaseUnitPayments
     {
         [JsonProperty("captures")]
-        public CheckPurchaseUnitPaymentsCaptures Captures { get; set; }
+        public PurchaseUnitPaymentsCapture[] Captures { get; set; }
     }
 }
