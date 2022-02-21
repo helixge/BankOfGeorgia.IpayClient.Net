@@ -1,10 +1,7 @@
-﻿using JWT.Algorithms;
-using JWT.Builder;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,14 +11,15 @@ namespace BankOfGeorgia.IpayClient.TestApp
     {
         static async Task Main(string[] args)
         {
-            //TestJsonExpirationValidation();
-
-            //await TestInjectionScopeAuthToken();
-            //await TestTransactionProcessing();
-            await TestTrensactionStatusCheck("56c1ffd2d42e202d3c7626a2b8ee0823b31dd506");
+            await TestInjectionScopeAuthToken();
+            MakeOrderResponse makeOrderResult = await TestTransactionProcessing();
+            string automaticCaptureOrderResultRedirectUrl = makeOrderResult.GetRedirectUrl();
+            Console.WriteLine(automaticCaptureOrderResultRedirectUrl);
+            Console.ReadKey();
+            GetPaymentDetailsResponse paymentDetailsResponse = await TestTransactionStatusCheck(makeOrderResult.OrderId);
         }
 
-        private static async Task TestTransactionProcessing()
+        private static async Task<MakeOrderResponse> TestTransactionProcessing()
         {
             using var provider = CreateServiceProvider();
             using var scope = provider.CreateScope();
@@ -29,7 +27,7 @@ namespace BankOfGeorgia.IpayClient.TestApp
             BankOfGeorgiaIpayClient client = scope.ServiceProvider
                 .GetRequiredService<BankOfGeorgiaIpayClient>();
 
-            var automaticCaptureOrderResult = await client.MakeOrderAsync(new IpayOrder()
+            MakeOrderResponse automaticCaptureOrderResult = await client.MakeOrderAsync(new IpayOrder()
             {
                 CaptureMethod = CaptureMethod.Automatic,
                 Intent = Intent.Authorize,
@@ -38,7 +36,7 @@ namespace BankOfGeorgia.IpayClient.TestApp
                         new IpayOrderItem(amount: 1.7m, description: "First product", quantity: 1, productId: "P001"),
                         new IpayOrderItem(amount: 2.5m, description: "Second product", quantity: 3, productId: "P002")
                     },
-                RedirectUrl = "https://mystore.ge/api/ipayreturn",
+                RedirectUrl = "https://example.ge/api/ipayreturn",
                 ShopOrderId = Guid.NewGuid().ToString("N"),
                 ShowShopOrderIdOnExtract = true,
                 PurchaseUnits = new[]
@@ -47,7 +45,8 @@ namespace BankOfGeorgia.IpayClient.TestApp
                         new OrderRequestPurchaseUnit(currency: Currency.GEL, value: 2.5m)
                     }
             });
-            var automaticCaptureOrderResultRedirectUrl = automaticCaptureOrderResult.GetRedirectUrl();
+
+            return automaticCaptureOrderResult;
         }
 
         private static ServiceProvider CreateServiceProvider()
@@ -87,16 +86,12 @@ namespace BankOfGeorgia.IpayClient.TestApp
             await client2.AuthenticateAsync();
 
             if (client1.AccessToken == client2.AccessToken)
+            {
                 throw new Exception("Clients share access token");
+            }
         }
 
-        private static void TestJsonExpirationValidation()
-        {
-            var jwtToken = "eyJraWQiOiIxMDA2IiwiY3R5IjoiYXBwbGljYXRpb25cL2pzb24iLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQdWJsaWMgcGF5bWVudCBBUEkgVjEiLCJhdWQiOiJpUGF5IERlbW8iLCJpc3MiOiJodHRwczpcL1wvaXBheS5nZSIsImV4cCI6MTYwOTg2MDk4Mn0.ZBYmIz-tV_VktDFgKf5WsM-NsM8GDmpjn3fMHjYYyS8";
-            var json = JwtHelper.IsTokenValid(jwtToken);
-        }
-
-        private static async Task TestTrensactionStatusCheck(string orderId)
+        private static async Task<GetPaymentDetailsResponse> TestTransactionStatusCheck(string orderId)
         {
             using var provider = CreateServiceProvider();
             using var scope = provider.CreateScope();
@@ -104,9 +99,8 @@ namespace BankOfGeorgia.IpayClient.TestApp
             BankOfGeorgiaIpayClient client = scope.ServiceProvider
                 .GetRequiredService<BankOfGeorgiaIpayClient>();
 
-            //GetPaymentDetailsResponse orderStatus = await client.GetPaymentDetailsAsync(orderId);
-            //GetOrderDetailsResponse orderDetails = await client.GetOrderDetailsAsync(orderId);
             GetPaymentDetailsResponse paymentDetails = await client.GetPaymentDetailsAsync(orderId);
+            return paymentDetails;
         }
     }
 }

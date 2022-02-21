@@ -28,13 +28,18 @@ namespace BankOfGeorgia.IpayClient
         public string GetRedirectUrl()
         {
             if (Links == null)
+            {
                 throw new IpayOrderException("Links value is null");
+            }
 
             var redirectLink = Links
                 .FirstOrDefault(l => l.Method == "REDIRECT")
                 ?.Href;
+
             if (redirectLink == null)
+            {
                 throw new IpayOrderException("Links value is null");
+            }
 
             return redirectLink;
         }

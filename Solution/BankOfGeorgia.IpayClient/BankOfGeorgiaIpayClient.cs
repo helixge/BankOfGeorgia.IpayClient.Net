@@ -22,6 +22,12 @@ namespace BankOfGeorgia.IpayClient
 
         public string AccessToken => _accessToken;
 
+        /// <summary>
+        /// Auto injectable client
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="httpClient"></param>
+        /// <param name="logger"></param>
         public BankOfGeorgiaIpayClient(
             BankOfGeorgiaIpayClientOptions options,
             HttpClient httpClient,
@@ -41,19 +47,18 @@ namespace BankOfGeorgia.IpayClient
         /// <exception cref="IpayClientAuthenticationException">Thrown when auhentication fails</exception>
         public async Task AuthenticateAsync()
         {
-            var authenticationString = $"{_options.ClientId}:{_options.SecretKey}";
-            var base64EncodedAuthenticationString = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes(authenticationString));
+            Dictionary<string, string> payload = new Dictionary<string, string>
+            {
+                { "grant_type", "client_credentials" }
+            };
 
-            var result = await MakeHttpRequest<AuthenticateResponse>(
-                GetFullUrl("/oauth2/token"),
-                false,
-                HttpMethod.Post,
-                new Dictionary<string, string>
-                {
-                    { "grant_type", "client_credentials" }
-                },
-                requestMessage => requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Basic", base64EncodedAuthenticationString)
-                );
+            AuthenticateResponse result = await MakeHttpRequest<AuthenticateResponse>(
+                url: GetFullUrl("/oauth2/token"),
+                useJwtAuth: false,
+                method: HttpMethod.Post,
+                urlEncodedPostPayload: payload,
+                processRequestMessage: ProcessTokenRequestMessage
+            ).ConfigureAwait(false);
 
             if (result.IsError)
                 throw new IpayClientAuthenticationException(result);
@@ -72,12 +77,11 @@ namespace BankOfGeorgia.IpayClient
         public Task<MakeOrderResponse> MakeOrderAsync(IpayOrder order)
         {
             return MakeHttpRequest<MakeOrderResponse>(
-                GetFullUrl($"/checkout/orders"),
-                true,
-                HttpMethod.Post,
-                order,
-                null
-                );
+                url: GetFullUrl($"/checkout/orders"),
+                useJwtAuth: true,
+                method: HttpMethod.Post,
+                payload: order
+            );
         }
 
         /// <summary>
@@ -88,12 +92,12 @@ namespace BankOfGeorgia.IpayClient
         public Task<CompletePreAuthPaymentResponse> CompletePreAuthPaymentAsync(string orderId)
         {
             return MakeHttpRequest<CompletePreAuthPaymentResponse>(
-                GetFullUrl($"/checkout/payment/pre-auth/complete/{orderId}"),
-                true,
-                HttpMethod.Get,
-                null,
-                null
-                );
+                url: GetFullUrl($"/checkout/payment/pre-auth/complete/{orderId}"),
+                useJwtAuth: true,
+                method: HttpMethod.Get,
+                urlEncodedPostPayload: null,
+                processRequestMessage: null
+            );
         }
 
         /// <summary>
@@ -103,50 +107,21 @@ namespace BankOfGeorgia.IpayClient
         /// <returns></returns>
         public Task<ServiceResponse> RefundAsync(string orderId, decimal? amount = null)
         {
+            var payload = new Dictionary<string, string>
+            {
+                { "order_id", orderId },
+                { "amount", amount?.ToString() }
+            };
+
             return MakeHttpRequest<ServiceResponse>(
-                GetFullUrl("/checkout/refund"),
-                true,
-                HttpMethod.Post,
-                new Dictionary<string, string>
-                {
-                    { "order_id", orderId },
-                    { "amount", amount?.ToString() }
-                },
-                null
-                );
+                url: GetFullUrl("/checkout/refund"),
+                useJwtAuth: true,
+                method: HttpMethod.Post,
+                urlEncodedPostPayload: payload,
+                processRequestMessage: null
+            );
         }
 
-        ///// <summary>
-        ///// Check order details
-        ///// Endpoint: /checkout/orders/{order_id}
-        ///// </summary>
-        ///// <returns></returns>
-        //public Task<GetOrderDetailsResponse> GetOrderDetailsAsync(string orderId)
-        //{
-        //    return MakeHttpRequest<GetOrderDetailsResponse>(
-        //        GetFullUrl($"/checkout/orders/{orderId}"),
-        //        true,
-        //        HttpMethod.Get,
-        //        null,
-        //        null
-        //        );
-        //}
-
-        ///// <summary>
-        ///// Check order status
-        ///// Endpoint: /checkout/orders/status/{order_id}
-        ///// </summary>
-        ///// <returns></returns>
-        //public Task<GetOrderStatusResponse> GetOrderStatusAsync(string orderId)
-        //{
-        //    return MakeHttpRequest<GetOrderStatusResponse>(
-        //        GetFullUrl($"/checkout/payment/{orderId}"),
-        //        true,
-        //        HttpMethod.Get,
-        //        null,
-        //        null
-        //        );
-        //}
 
         /// <summary>
         /// /checkout/payment/{order_id}
@@ -156,31 +131,39 @@ namespace BankOfGeorgia.IpayClient
         public Task<GetPaymentDetailsResponse> GetPaymentDetailsAsync(string orderId)
         {
             return MakeHttpRequest<GetPaymentDetailsResponse>(
-                GetFullUrl($"/checkout/payment/{orderId}"),
-                true,
-                HttpMethod.Get,
-                null,
-                null
+                url: GetFullUrl($"/checkout/payment/{orderId}"),
+                useJwtAuth: true,
+                method: HttpMethod.Get,
+                urlEncodedPostPayload: null,
+                processRequestMessage: null
                 );
         }
 
-
-        private Task<TResult> MakeHttpRequest<TResult>(string url, bool useJwtAuth, HttpMethod method, object jsonPostPayload = null, Action<HttpRequestMessage> processRequestMessage = null)
+        private Task<TResult> MakeHttpRequest<TResult>(
+            string url,
+            bool useJwtAuth,
+            HttpMethod method,
+            object payload)
             where TResult : ServiceResponse, new()
         {
             var requestMessage = new HttpRequestMessage(method, url);
 
-            if (jsonPostPayload != null)
+            if (payload != null)
             {
-                var serializedPayload = JsonConvert.SerializeObject(jsonPostPayload);
+                string serializedPayload = JsonConvert.SerializeObject(payload);
                 requestMessage.Content = new StringContent(serializedPayload, Encoding.UTF8, "application/json");
             }
 
-            return MakeHttpRequest<TResult>(useJwtAuth, method, requestMessage, processRequestMessage);
+            return MakeHttpRequest<TResult>(useJwtAuth, requestMessage, processRequestMessage: null);
 
         }
 
-        private Task<TResult> MakeHttpRequest<TResult>(string url, bool useJwtAuth, HttpMethod method, IEnumerable<KeyValuePair<string, string>> urlEncodedPostPayload = null, Action<HttpRequestMessage> processRequestMessage = null)
+        private Task<TResult> MakeHttpRequest<TResult>(
+            string url,
+            bool useJwtAuth,
+            HttpMethod method,
+            IEnumerable<KeyValuePair<string, string>> urlEncodedPostPayload = null,
+            Action<HttpRequestMessage> processRequestMessage = null)
             where TResult : ServiceResponse, new()
         {
             var requestMessage = new HttpRequestMessage(method, url);
@@ -189,31 +172,34 @@ namespace BankOfGeorgia.IpayClient
             {
                 IEnumerable<KeyValuePair<string, string>> keyValuePairs = urlEncodedPostPayload
                     .Where(i => i.Value != null);
-                
+
                 requestMessage.Content = new FormUrlEncodedContent(keyValuePairs);
             }
 
-            return MakeHttpRequest<TResult>(useJwtAuth, method, requestMessage, processRequestMessage);
+            return MakeHttpRequest<TResult>(useJwtAuth, requestMessage, processRequestMessage);
         }
 
-        private async Task<TResult> MakeHttpRequest<TResult>(bool useJwtAuth, HttpMethod method, HttpRequestMessage requestMessage, Action<HttpRequestMessage> processRequestMessage = null)
+        private async Task<TResult> MakeHttpRequest<TResult>(
+            bool useJwtAuth,
+            HttpRequestMessage requestMessage,
+            Action<HttpRequestMessage> processRequestMessage = null)
             where TResult : ServiceResponse, new()
         {
             try
             {
                 if (useJwtAuth)
                 {
-                    await AuthenticateIfRequired();
+                    await AuthenticateIfRequired().ConfigureAwait(false);
                     requestMessage.Headers.Add("Authorization", "Bearer " + _accessToken);
                 }
 
                 processRequestMessage?.Invoke(requestMessage);
 
-                using var httpResponseMessage = await _httpClient.SendAsync(requestMessage);
+                using HttpResponseMessage httpResponseMessage = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
 
-                var responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
+                string responseContent = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-                var result = JsonConvert.DeserializeObject<TResult>(responseContent);
+                TResult result = JsonConvert.DeserializeObject<TResult>(responseContent);
                 result.RawResponse = responseContent;
                 result.HttpStatusCode = (int)httpResponseMessage.StatusCode;
                 result.IsError = !httpResponseMessage.IsSuccessStatusCode;
@@ -233,15 +219,28 @@ namespace BankOfGeorgia.IpayClient
         private async Task AuthenticateIfRequired()
         {
             if (_accessToken == null)
-                await AuthenticateAsync();
+            {
+                await AuthenticateAsync().ConfigureAwait(false);
+            }
 
             if (!JwtHelper.IsTokenValid(_accessToken))
-                await AuthenticateAsync();
+            {
+                await AuthenticateAsync().ConfigureAwait(false);
+            }
         }
 
         private string GetFullUrl(string endpoint)
         {
             return $"https://ipay.ge/opay/api/v1{endpoint}";
+        }
+
+        private void ProcessTokenRequestMessage(HttpRequestMessage message)
+        {
+            string authenticationString = $"{_options.ClientId}:{_options.SecretKey}";
+            byte[] authenticationStringBytes = Encoding.ASCII.GetBytes(authenticationString);
+            string base64EncodedAuthenticationString = Convert.ToBase64String(authenticationStringBytes);
+
+            message.Headers.Authorization = new AuthenticationHeaderValue("Basic", base64EncodedAuthenticationString);
         }
     }
 }
