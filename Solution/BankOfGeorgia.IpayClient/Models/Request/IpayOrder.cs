@@ -29,6 +29,9 @@ namespace BankOfGeorgia.IpayClient
         [JsonProperty("locale")]
         public string Locale { get; set; }
 
+        /// <summary>
+        /// Unique order ID in the shop
+        /// </summary>
         [JsonProperty("shop_order_id")]
         public string ShopOrderId { get; set; }
 
@@ -44,17 +47,17 @@ namespace BankOfGeorgia.IpayClient
         [JsonProperty("show_shop_order_id_on_extract")]
         public bool ShowShopOrderIdOnExtract { get; set; }
 
-        /// <summary>
-        /// Used in case the offer is valid for installment plan.
-        /// </summary>
-        [JsonProperty("loan_code")]
-        public string LoanCode { get; set; }
+        ///// <summary>
+        ///// Used in case the offer is valid for installment plan.
+        ///// </summary>
+        //[JsonProperty("loan_code")]
+        //public string LoanCode { get; set; }
 
-        /// <summary>
-        /// Used for recurring payment. For a recurring payment, you need the transaction_id of a successful customer payment.
-        /// </summary>
-        [JsonProperty("card_transaction_id")]
-        public string CardTransactionId { get; set; }
+        ///// <summary>
+        ///// Used for recurring payment. For a recurring payment, you need the transaction_id of a successful customer payment.
+        ///// </summary>
+        //[JsonProperty("card_transaction_id")]
+        //public string CardTransactionId { get; set; }
 
         /// <summary>
         /// If value is MANUAL, amount is placed on hold and removed from available balance immediately.After that, you will need to complete pre-authorization by calling pre-auth/complete or unblock amount by calling refund. If you do not call one of these methods, the amount is automatically unlocked after 30 days.
@@ -62,6 +65,9 @@ namespace BankOfGeorgia.IpayClient
         [JsonProperty("capture_method")]
         public CaptureMethod CaptureMethod { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [JsonProperty("purchase_units")]
         public IEnumerable<OrderRequestPurchaseUnit> PurchaseUnits { get; set; }
     }

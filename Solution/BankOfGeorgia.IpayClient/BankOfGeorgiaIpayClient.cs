@@ -85,6 +85,21 @@ namespace BankOfGeorgia.IpayClient
         }
 
         /// <summary>
+        /// Make recurring request
+        /// Endpoint: /checkout/payment/subscription
+        /// </summary>
+        /// <returns></returns>
+        public Task<MakeRecurringOrderResponse> MakeRecurringOrderAsync(IpayRecurringOrder order)
+        {
+            return MakeHttpRequest<MakeRecurringOrderResponse>(
+                url: GetFullUrl($"/checkout/payment/subscription"),
+                useJwtAuth: true,
+                method: HttpMethod.Post,
+                payload: order
+            );
+        }
+
+        /// <summary>
         /// Complete pre-auth payment
         /// Endpoint: /checkout/payment/pre-auth/complete/{order_id}
         /// </summary>
@@ -121,7 +136,6 @@ namespace BankOfGeorgia.IpayClient
                 processRequestMessage: null
             );
         }
-
 
         /// <summary>
         /// /checkout/payment/{order_id}

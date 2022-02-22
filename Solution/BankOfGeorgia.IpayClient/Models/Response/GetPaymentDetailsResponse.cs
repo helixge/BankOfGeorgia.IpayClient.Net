@@ -6,7 +6,7 @@ namespace BankOfGeorgia.IpayClient
     public class GetPaymentDetailsResponse : ServiceResponse
     {
         [JsonProperty("status")]
-        public PaymentStatus Status { get; set; }
+        public PaymentStatus? Status { get; set; }
 
         [JsonProperty("order_id")]
         public string OrderId { get; set; }
@@ -24,10 +24,10 @@ namespace BankOfGeorgia.IpayClient
         public string ShopOrderId { get; set; }
 
         [JsonProperty("payment_method")]
-        public PaymentMethod PaymentMethod { get; set; }
+        public PaymentMethod? PaymentMethod { get; set; }
 
         [JsonProperty("card_type")]
-        public CardType CardType { get; set; }
+        public CardType? CardType { get; set; }
 
         //Card Payment
         [JsonProperty("pan")]
@@ -41,10 +41,6 @@ namespace BankOfGeorgia.IpayClient
         /// პრეავტორიზაციის სტატუსი. ბრუნდება მხოლოდ მაშინ, თუ ორდერის გენერაციის დროს, capture_method არის MANUAL და ორდერის სტატუსი არის success
         /// </summary>
         [JsonProperty("pre_auth_status")]
-        public PreAuthStatus PreAuthStatus { get; set; }
-
-
-        //[JsonProperty("multi_merchant_transaction_id")]
-        //public string MultiMerchantTransactionId { get; set; }
+        public PreAuthStatus? PreAuthStatus { get; set; }
     }
 }

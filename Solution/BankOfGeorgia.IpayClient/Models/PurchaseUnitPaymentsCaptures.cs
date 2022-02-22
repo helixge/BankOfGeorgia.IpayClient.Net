@@ -21,7 +21,7 @@ namespace BankOfGeorgia.IpayClient
         public string UpdateTime { get; set; }
 
         [JsonProperty("amount")]
-        public PurchaseUnitAmount Amount { get; set; }
+        public Amount Amount { get; set; }
 
         public DateTimeOffset GetCraeteTime()
          => DateTimeConversionHelper.ConvertIpayStringToDateTimeOffset(CreateTime);

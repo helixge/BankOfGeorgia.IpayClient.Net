@@ -7,7 +7,7 @@ namespace BankOfGeorgia.IpayClient
         /// <summary>
         /// Purchase unit currency
         /// </summary>
-        [JsonProperty("currency")]
+        [JsonProperty("currency_code")]
         public string Currency { get; set; }
 
         /// <summary>

@@ -22,10 +22,10 @@ namespace BankOfGeorgia.IpayClient
         [EnumMember(Value = "AUTHORIZE")]
         Authorize,
 
-        /// <summary>
-        ///  Users can pay with only installment option. For this user should enter BOG credentials, username / password and go through installment payment process. LOAN minimum amount is 50 GEL and maximum amount is 4900 GEL
-        /// </summary>
-        [EnumMember(Value = "LOAN")]
-        Loan
+        ///// <summary>
+        /////  Users can pay with only installment option. For this user should enter BOG credentials, username / password and go through installment payment process. LOAN minimum amount is 50 GEL and maximum amount is 4900 GEL
+        ///// </summary>
+        //[EnumMember(Value = "LOAN")]
+        //Loan
     }
 }

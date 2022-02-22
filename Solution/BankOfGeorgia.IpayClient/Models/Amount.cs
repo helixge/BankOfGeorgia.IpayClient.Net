@@ -2,12 +2,12 @@
 
 namespace BankOfGeorgia.IpayClient
 {
-    public class PurchaseUnitAmount
+    public class Amount
     {
         [JsonProperty("currency_code")]
         public string Currency { get; set; }
 
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public decimal Value { get; set; }
     }
 }

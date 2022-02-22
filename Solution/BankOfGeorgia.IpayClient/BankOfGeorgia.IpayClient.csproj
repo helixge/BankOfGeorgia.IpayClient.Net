@@ -18,6 +18,7 @@
     <FileVersion>1.0.0.0</FileVersion>
     <Version>1.0.0-alpha</Version>
     <Product>Bank of Georgia iPay Card Payments Gateway Client (.NET Library)</Product>
+    <UserSecretsId>bf221326-8568-4e91-a30d-43848f236c34</UserSecretsId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
