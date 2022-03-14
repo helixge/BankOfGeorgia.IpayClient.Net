@@ -9,7 +9,7 @@
     <PackageProjectUrl>https://github.com/helixge/BankOfGeorgia.IpayClient.Net</PackageProjectUrl>
     <RepositoryUrl>https://github.com/helixge/BankOfGeorgia.IpayClient.Net</RepositoryUrl>
     <Copyright>Helix</Copyright>
-    <PackageId>BankOfGeorgia.IpayClient</PackageId>
+    <PackageId>Helix.BankOfGeorgia.IpayClient</PackageId>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageTags>bankofgeorgia;bank of georgia;bank;ecommerce;payments;visa;mastercard;master card;amex;american express;americanexpress;e-commerce</PackageTags>
     <PackageIcon>helix.png</PackageIcon>
