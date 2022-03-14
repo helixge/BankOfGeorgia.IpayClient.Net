@@ -33,7 +33,7 @@ namespace Example.WebApp.Controllers
             };
 
             //Create Order
-            var order = new IpayOrder()
+            var order = new IpayOrderRequest()
             {
                 Intent = Intent.Authorize,
                 Items = products,
@@ -45,7 +45,7 @@ namespace Example.WebApp.Controllers
                 PurchaseUnits = new[]
                 {
                         //new OrderRequestPurchaseUnit(currency: Currency.GEL, value: 1.5m),
-                        new OrderRequestPurchaseUnit(currency: Currency.GEL, value: products.Sum(p=>p.Amount * p.Quantity))
+                        new IpayOrderRequestPurchaseUnit(currency: Currency.GEL, value: products.Sum(p=>p.Amount * p.Quantity))
                 }
             };
 

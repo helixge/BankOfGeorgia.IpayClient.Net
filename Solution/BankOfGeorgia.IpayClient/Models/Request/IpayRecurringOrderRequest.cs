@@ -5,7 +5,7 @@ using System.Text;
 
 namespace BankOfGeorgia.IpayClient
 {
-    public class IpayRecurringOrder
+    public class IpayRecurringOrderRequest
     {
         [JsonProperty("order_id")]
         public string OrderId { get; set; }

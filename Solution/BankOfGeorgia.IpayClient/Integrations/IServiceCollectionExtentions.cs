@@ -39,10 +39,13 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddBankOfGeorgiaIpay(this IServiceCollection services, BankOfGeorgiaIpayClientOptions options)
         {
             services
-                .AddTransient<BankOfGeorgiaIpayClient>();
+                .AddTransient<IBankOfGeorgiaIpayClient, BankOfGeorgiaIpayClient>();
 
             services
                 .AddTransient<BankOfGeorgiaIpayClientOptions>(serviceProvider => options);
+
+            services
+               .AddSingleton<IMappingService, MappingService>();
 
             services
                 .AddHttpClient<BankOfGeorgiaIpayClient, BankOfGeorgiaIpayClient>();

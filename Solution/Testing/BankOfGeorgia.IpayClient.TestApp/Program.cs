@@ -13,53 +13,45 @@ namespace BankOfGeorgia.IpayClient.TestApp
     {
         static async Task Main(string[] args)
         {
-            //await TestInjectionScopeAuthToken();
-            //MakeOrderResponse makeOrderResult = await TestTransactionProcessing();
-            //string automaticCaptureOrderResultRedirectUrl = makeOrderResult.GetRedirectUrl();
-            //Console.WriteLine(automaticCaptureOrderResultRedirectUrl);
-            //Console.ReadKey();
-            //GetPaymentDetailsResponse paymentDetailsResponse = await TestTransactionStatusCheck(makeOrderResult.OrderId);
-
-
             using var provider = CreateServiceProvider();
             using var scope = provider.CreateScope();
 
             BankOfGeorgiaIpayClient client = scope.ServiceProvider
-               .GetRequiredService<BankOfGeorgiaIpayClient>();
+                  .GetRequiredService<BankOfGeorgiaIpayClient>();
 
-            IpayOrderItem[] products = new[]
+            OrderItem[] orderItems = new[]
             {
-                    new IpayOrderItem(amount: 1.7m, description: "First product", quantity: 1, productId: "P001"),
-                    new IpayOrderItem(amount: 2.5m, description: "Second product", quantity: 3, productId: "P002")
+                new OrderItem() { Amount = 1.7m, Description = "First product", Quantity = 1, ProductId = "P001"},
+                new OrderItem() { Amount= 2.5m, Description =  "Second product", Quantity =  3, ProductId = "P002"}
             };
 
-            IpayOrder order = new IpayOrder()
+            //Make order with automatic capture
             {
-                CaptureMethod = CaptureMethod.Automatic,
-                Intent = Intent.Authorize,
-                Locale = "ka",
-                RedirectUrl = "https://example.ge/api/ipayreturn",
-                ShopOrderId = Guid.NewGuid().ToString("N"),
-                ShowShopOrderIdOnExtract = true,
-                Items = products,
-                PurchaseUnits = new[]
-                    {
-                         new OrderRequestPurchaseUnit(currency: Currency.USD, value: products.Sum(p=>p.Amount * p.Quantity))
-                    }
-            };
-
-            //Register transaction
-            {
-                MakeOrderResponse automaticCaptureOrderResult = await client.MakeOrderAsync(order);
-                OpenUrlInBworser(automaticCaptureOrderResult.GetRedirectUrl());
+                MakeOrderResponse orderResult = await MakeOrder(client, CaptureMethod.Automatic, orderItems);
+                OpenUrlInBworser(orderResult.GetRedirectUrl());
             }
 
-            //Recurring order
+            //Make order with manual capture and complete preauthorization
             {
-                MakeOrderResponse orderResult = await client.MakeOrderAsync(order);
+                MakeOrderResponse orderResult = await MakeOrder(client, CaptureMethod.Manual, orderItems);
+                OpenUrlInBworser(orderResult.GetRedirectUrl());
+
+                var completePreAuthPaymentRequest = new CompletePreAuthPaymentRequest()
+                {
+                    AuthType = AuthType.Partial,
+                    Amount = 1m
+                };
+                ServiceResponse completePreAuthPaymentResult = await client.CompletePreAuthPaymentAsync(orderResult.OrderId, completePreAuthPaymentRequest);
+            }
+
+            //Make recurring order
+            {
+                MakeOrderResponse orderResult = await MakeOrder(client, CaptureMethod.Automatic, orderItems);
+                OpenUrlInBworser(orderResult.GetRedirectUrl());
+
                 ServiceResponse refundResult = await client.RefundAsync(orderResult.OrderId);
 
-                MakeRecurringOrderResponse reccurringResult = await client.MakeRecurringOrderAsync(new IpayRecurringOrder()
+                MakeRecurringOrderResponse reccurringResult = await client.MakeRecurringOrderAsync(new IpayRecurringOrderRequest()
                 {
                     OrderId = orderResult.OrderId,
                     Amount = new Amount()
@@ -76,11 +68,31 @@ namespace BankOfGeorgia.IpayClient.TestApp
 
             //Get payment details
             {
-                MakeOrderResponse automaticCaptureOrderResult = null;
-                GetPaymentDetailsResponse paymentDetails = await client.GetPaymentDetailsAsync(automaticCaptureOrderResult.OrderId);
+                MakeOrderResponse orderResult = await MakeOrder(client, CaptureMethod.Automatic, orderItems);
+                OpenUrlInBworser(orderResult.GetRedirectUrl());
+
+                GetPaymentDetailsResponse paymentDetails = await client.GetPaymentDetailsAsync(orderResult.OrderId);
             }
         }
 
+        public static async Task<MakeOrderResponse> MakeOrder(BankOfGeorgiaIpayClient client, CaptureMethod captureMethod, OrderItem[] orderItems)
+        {
+            OrderRequest order = new OrderRequest()
+            {
+                CaptureMethod = captureMethod,
+                Intent = Intent.Authorize,
+                Locale = Locale.KA,
+                ShopOrderId = Guid.NewGuid().ToString("N"),
+                RedirectUrl = "https://example.ge/api/ipayreturn",
+                Currency = Currency.GEL,
+                ShowShopOrderIdOnExtract = true,
+                Items = orderItems
+            };
+
+            MakeOrderResponse orderResult = await client.MakeOrderAsync(order);
+            
+            return orderResult;
+        }
 
         private static ServiceProvider CreateServiceProvider()
         {
@@ -109,67 +121,5 @@ namespace BankOfGeorgia.IpayClient.TestApp
             Console.WriteLine("Press any key to continue");
             Console.ReadKey();
         }
-
-        //private static async Task<MakeOrderResponse> TestTransactionProcessing()
-        //{
-        //    using var provider = CreateServiceProvider();
-        //    using var scope = provider.CreateScope();
-
-        //    BankOfGeorgiaIpayClient client = scope.ServiceProvider
-        //        .GetRequiredService<BankOfGeorgiaIpayClient>();
-
-        //    MakeOrderResponse automaticCaptureOrderResult = await client.MakeOrderAsync(new IpayOrder()
-        //    {
-        //        CaptureMethod = CaptureMethod.Automatic,
-        //        Intent = Intent.Authorize,
-        //        Items = new[]
-        //        {
-        //                new IpayOrderItem(amount: 1.7m, description: "First product", quantity: 1, productId: "P001"),
-        //                new IpayOrderItem(amount: 2.5m, description: "Second product", quantity: 3, productId: "P002")
-        //            },
-        //        RedirectUrl = "https://example.ge/api/ipayreturn",
-        //        ShopOrderId = Guid.NewGuid().ToString("N"),
-        //        ShowShopOrderIdOnExtract = true,
-        //        PurchaseUnits = new[]
-        //        {
-        //                new OrderRequestPurchaseUnit(currency: Currency.GEL, value: 1.7m),
-        //                new OrderRequestPurchaseUnit(currency: Currency.GEL, value: 2.5m)
-        //            }
-        //    });
-        //    return automaticCaptureOrderResult;
-        //}
-
-        //private static async Task TestInjectionScopeAuthToken()
-        //{
-        //    using var serviceProvider = CreateServiceProvider();
-        //    using var scope1 = serviceProvider.CreateScope();
-        //    BankOfGeorgiaIpayClient client1 = scope1.ServiceProvider
-        //        .GetRequiredService<BankOfGeorgiaIpayClient>();
-
-        //    using var scope2 = serviceProvider.CreateScope();
-        //    BankOfGeorgiaIpayClient client2 = scope2.ServiceProvider
-        //        .GetRequiredService<BankOfGeorgiaIpayClient>();
-
-        //    await client1.AuthenticateAsync();
-        //    Thread.Sleep(2000);
-        //    await client2.AuthenticateAsync();
-
-        //    if (client1.AccessToken == client2.AccessToken)
-        //    {
-        //        throw new Exception("Clients share access token");
-        //    }
-        //}
-
-        //private static async Task<GetPaymentDetailsResponse> TestTransactionStatusCheck(string orderId)
-        //{
-        //    using var provider = CreateServiceProvider();
-        //    using var scope = provider.CreateScope();
-
-        //    BankOfGeorgiaIpayClient client = scope.ServiceProvider
-        //        .GetRequiredService<BankOfGeorgiaIpayClient>();
-
-        //    GetPaymentDetailsResponse paymentDetails = await client.GetPaymentDetailsAsync(orderId);
-        //    return paymentDetails;
-        //}
     }
 }

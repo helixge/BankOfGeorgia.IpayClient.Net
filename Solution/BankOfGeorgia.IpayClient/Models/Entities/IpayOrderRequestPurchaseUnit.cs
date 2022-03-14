@@ -2,7 +2,7 @@
 
 namespace BankOfGeorgia.IpayClient
 {
-    public class OrderRequestPurchaseUnit
+    public class IpayOrderRequestPurchaseUnit
     {
         /// <summary>
         /// Purchase unit amount entry
@@ -10,12 +10,12 @@ namespace BankOfGeorgia.IpayClient
         [JsonProperty("amount")]
         public OrderRequestPurchaseUnitAmount Amount { get; set; }
 
-        public OrderRequestPurchaseUnit()
+        public IpayOrderRequestPurchaseUnit()
         {
 
         }
 
-        public OrderRequestPurchaseUnit(string currency, decimal value)
+        public IpayOrderRequestPurchaseUnit(string currency, decimal value)
             : this()
         {
             Amount = new OrderRequestPurchaseUnitAmount(currency, value);

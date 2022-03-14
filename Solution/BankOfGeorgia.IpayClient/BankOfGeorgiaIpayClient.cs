@@ -10,14 +10,24 @@ using System.Threading.Tasks;
 
 namespace BankOfGeorgia.IpayClient
 {
+    public interface IBankOfGeorgiaIpayClient
+    {
+        Task AuthenticateAsync();
+        Task<ServiceResponse> CompletePreAuthPaymentAsync(string orderId, CompletePreAuthPaymentRequest completePreAuthPaymentRequest);
+        Task<GetPaymentDetailsResponse> GetPaymentDetailsAsync(string orderId);
+        Task<MakeOrderResponse> MakeOrderAsync(OrderRequest order);
+        Task<MakeRecurringOrderResponse> MakeRecurringOrderAsync(IpayRecurringOrderRequest order);
+        Task<ServiceResponse> RefundAsync(string orderId, decimal? amount = null);
+    }
     /// <summary>
     /// Full documentation is located at: https://developer.ipay.ge/v1/
     /// </summary>
-    public class BankOfGeorgiaIpayClient
+    public class BankOfGeorgiaIpayClient : IBankOfGeorgiaIpayClient
     {
         private readonly BankOfGeorgiaIpayClientOptions _options;
         private readonly HttpClient _httpClient;
         private readonly ILogger<BankOfGeorgiaIpayClient> _logger;
+        private readonly IMappingService _mappingService;
         private string _accessToken = null;
 
         public string AccessToken => _accessToken;
@@ -31,12 +41,14 @@ namespace BankOfGeorgia.IpayClient
         public BankOfGeorgiaIpayClient(
             BankOfGeorgiaIpayClientOptions options,
             HttpClient httpClient,
-            ILogger<BankOfGeorgiaIpayClient> logger
+            ILogger<BankOfGeorgiaIpayClient> logger,
+            IMappingService mappingService
             )
         {
             _options = options;
             _httpClient = httpClient;
             _logger = logger;
+            _mappingService = mappingService;
         }
 
         /// <summary>
@@ -74,13 +86,14 @@ namespace BankOfGeorgia.IpayClient
         /// Endpoint: /checkout/orders
         /// </summary>
         /// <returns></returns>
-        public Task<MakeOrderResponse> MakeOrderAsync(IpayOrder order)
+        public Task<MakeOrderResponse> MakeOrderAsync(OrderRequest order)
         {
+            IpayOrderRequest payload = _mappingService.CreateIpayOrderRequest(order);
             return MakeHttpRequest<MakeOrderResponse>(
                 url: GetFullUrl($"/checkout/orders"),
                 useJwtAuth: true,
                 method: HttpMethod.Post,
-                payload: order
+                payload: payload
             );
         }
 
@@ -89,7 +102,7 @@ namespace BankOfGeorgia.IpayClient
         /// Endpoint: /checkout/payment/subscription
         /// </summary>
         /// <returns></returns>
-        public Task<MakeRecurringOrderResponse> MakeRecurringOrderAsync(IpayRecurringOrder order)
+        public Task<MakeRecurringOrderResponse> MakeRecurringOrderAsync(IpayRecurringOrderRequest order)
         {
             return MakeHttpRequest<MakeRecurringOrderResponse>(
                 url: GetFullUrl($"/checkout/payment/subscription"),
@@ -104,14 +117,13 @@ namespace BankOfGeorgia.IpayClient
         /// Endpoint: /checkout/payment/pre-auth/complete/{order_id}
         /// </summary>
         /// <returns></returns>
-        public Task<CompletePreAuthPaymentResponse> CompletePreAuthPaymentAsync(string orderId)
+        public Task<ServiceResponse> CompletePreAuthPaymentAsync(string orderId, CompletePreAuthPaymentRequest completePreAuthPaymentRequest)
         {
-            return MakeHttpRequest<CompletePreAuthPaymentResponse>(
-                url: GetFullUrl($"/checkout/payment/pre-auth/complete/{orderId}"),
+            return MakeHttpRequest<ServiceResponse>(
+                url: GetFullUrl($"/checkout/payment/{orderId}/pre-auth/completion"),
                 useJwtAuth: true,
                 method: HttpMethod.Get,
-                urlEncodedPostPayload: null,
-                processRequestMessage: null
+                payload: completePreAuthPaymentRequest
             );
         }
 
@@ -124,9 +136,13 @@ namespace BankOfGeorgia.IpayClient
         {
             var payload = new Dictionary<string, string>
             {
-                { "order_id", orderId },
-                { "amount", amount?.ToString() }
+                { "order_id", orderId }
             };
+
+            if (amount != null)
+            {
+                payload.Add("amount", amount.ToString());
+            }
 
             return MakeHttpRequest<ServiceResponse>(
                 url: GetFullUrl("/checkout/refund"),
