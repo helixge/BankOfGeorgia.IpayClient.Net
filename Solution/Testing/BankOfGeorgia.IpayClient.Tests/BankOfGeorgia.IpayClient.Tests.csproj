@@ -26,8 +26,4 @@
     <ProjectReference Include="..\..\BankOfGeorgia.IpayClient\BankOfGeorgia.IpayClient.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-
 </Project>
