@@ -12,6 +12,7 @@ namespace BankOfGeorgia.IpayClient
             // so the token is effectively expired.
             // iPay Tokens expire in 60 seconds.
             // This method manually adds 60 seconds to the token exp time for expiry calculation and token validation.
+            // The token is considered expired 5 seconds before the actual expiration to compensate for any delays 
 
             JwtPayload json = new JwtBuilder()
                 .WithAlgorithm(new HMACSHA256Algorithm())
