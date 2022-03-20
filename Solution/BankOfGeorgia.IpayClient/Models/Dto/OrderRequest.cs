@@ -4,6 +4,10 @@ using System.Text;
 
 namespace BankOfGeorgia.IpayClient
 {
+    /// <summary>
+    /// Purchase order request
+    /// This is a DTO class that simplifies underlying iPay API request model
+    /// </summary>
     public class OrderRequest
     {
         /// <summary>

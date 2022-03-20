@@ -15,7 +15,7 @@ namespace BankOfGeorgia.IpayClient
 
         }
 
-        public IpayOrderRequestPurchaseUnit(string currency, decimal value)
+        public IpayOrderRequestPurchaseUnit(string currency, string value)
             : this()
         {
             Amount = new OrderRequestPurchaseUnitAmount(currency, value);

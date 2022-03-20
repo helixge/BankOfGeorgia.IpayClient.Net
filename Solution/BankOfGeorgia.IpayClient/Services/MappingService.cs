@@ -41,7 +41,7 @@ namespace BankOfGeorgia.IpayClient
             }
             return new IpayOrderItem()
             {
-                Amount = orderItem.Price,
+                Amount = StringDecimalConversionHelper.ConvertDecimalToString(orderItem.Price),
                 Description = orderItem.Description,
                 ProductId = orderItem.ProductId,
                 Quantity = orderItem.Quantity
@@ -65,7 +65,7 @@ namespace BankOfGeorgia.IpayClient
 
             var purchaseUnit = new IpayOrderRequestPurchaseUnit();
             purchaseUnit.Amount = new OrderRequestPurchaseUnitAmount();
-            purchaseUnit.Amount.Value = sum;
+            purchaseUnit.Amount.Value = StringDecimalConversionHelper.ConvertDecimalToString(sum);
             purchaseUnit.Amount.Currency = currency;
 
             return new IpayOrderRequestPurchaseUnit[] { purchaseUnit };

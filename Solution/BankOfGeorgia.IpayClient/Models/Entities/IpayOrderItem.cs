@@ -5,11 +5,10 @@ namespace BankOfGeorgia.IpayClient
     public class IpayOrderItem
     {
         /// <summary>
-        /// Amount in GEL
+        /// Amount
         /// </summary>
-        [JsonConverter(typeof(SerializeDecimaAsStringJsonConverter))]
         [JsonProperty("amount")]
-        public decimal Amount { get; set; }
+        public string Amount { get; set; }
 
         /// <summary>
         /// Product description
@@ -34,7 +33,7 @@ namespace BankOfGeorgia.IpayClient
 
         }
 
-        public IpayOrderItem(decimal amount, string description, int quantity, string productId)
+        public IpayOrderItem(string amount, string description, int quantity, string productId)
             : this()
         {
             Amount = amount;

@@ -13,16 +13,15 @@ namespace BankOfGeorgia.IpayClient
         /// <summary>
         /// Purchase unit value
         /// </summary>
-        [JsonConverter(typeof(SerializeDecimaAsStringJsonConverter))]
         [JsonProperty("value")]
-        public decimal Value { get; set; }
+        public string Value { get; set; }
 
         public OrderRequestPurchaseUnitAmount()
         {
 
         }
 
-        public OrderRequestPurchaseUnitAmount(string currency, decimal value)
+        public OrderRequestPurchaseUnitAmount(string currency, string value)
             : this()
         {
             Currency = currency;

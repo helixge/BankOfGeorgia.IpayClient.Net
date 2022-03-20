@@ -1,5 +1,8 @@
 ﻿namespace BankOfGeorgia.IpayClient
 {
+    /// <summary>
+    /// Purchase order item
+    /// </summary>
     public class OrderItem
     {
         /// <summary>
