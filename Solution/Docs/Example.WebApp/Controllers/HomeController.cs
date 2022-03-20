@@ -1,8 +1,6 @@
 ﻿using BankOfGeorgia.IpayClient;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Example.WebApp.Controllers
@@ -26,27 +24,22 @@ namespace Example.WebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Pay()
         {
-            IpayOrderItem[] products = new[]
-            {
-                new IpayOrderItem(amount: 200.0m, description: "First product", quantity: 1, productId: "P001"),
-                new IpayOrderItem(amount: 100000.5m, description: "Second product", quantity: 3, productId: "P002")
-            };
-
             //Create Order
-            var order = new IpayOrderRequest()
+            var order = new OrderRequest()
             {
                 Intent = Intent.Authorize,
-                Items = products,
+                Currency = IPayCurrency.GEL,
+                Items = new[]
+                {
+                    new OrderItem() { Price= 75.12m, Description = "First product", Quantity = 1, ProductId = "P-001" },
+                    new OrderItem() { Price= 127.51m, Description = "Second product", Quantity = 3, ProductId = "P-002" },
+                    new OrderItem() { Price= 35.00m, Description = "Shipping", Quantity = 1, ProductId = "SHIPPING" }
+                },
                 Locale = "ka",
                 ShopOrderId = Guid.NewGuid().ToString("N"),
                 RedirectUrl = "https://localhost:44397/IpayCallback/Payment",
                 ShowShopOrderIdOnExtract = true,
                 CaptureMethod = CaptureMethod.Automatic,
-                PurchaseUnits = new[]
-                {
-                        //new OrderRequestPurchaseUnit(currency: Currency.GEL, value: 1.5m),
-                        new IpayOrderRequestPurchaseUnit(currency: Currency.GEL, value: products.Sum(p=>p.Amount * p.Quantity))
-                }
             };
 
             // Create Transaction

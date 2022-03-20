@@ -8,9 +8,10 @@ namespace BankOfGeorgia.IpayClient
     {
         public static bool IsTokenValid(string jwtToken)
         {
-            // iPay sets token exp date to creation time instead of expiration time.
-            // This method manually adds 60 seconds to the token exp time for expiry calculation and token validation
-            // 60 seconds is the default token lifespan
+            // iPay sets token exp date to creation time instead of expiration time,
+            // so the token is effectively expired.
+            // iPay Tokens expire in 60 seconds.
+            // This method manually adds 60 seconds to the token exp time for expiry calculation and token validation.
 
             JwtPayload json = new JwtBuilder()
                 .WithAlgorithm(new HMACSHA256Algorithm())

@@ -41,7 +41,7 @@ namespace BankOfGeorgia.IpayClient
             }
             return new IpayOrderItem()
             {
-                Amount = orderItem.Amount,
+                Amount = orderItem.Price,
                 Description = orderItem.Description,
                 ProductId = orderItem.ProductId,
                 Quantity = orderItem.Quantity
@@ -61,7 +61,7 @@ namespace BankOfGeorgia.IpayClient
 
             }
 
-            decimal sum = orderItems.Sum(i => i.Quantity * i.Amount);
+            decimal sum = orderItems.Sum(i => i.Quantity * i.Price);
 
             var purchaseUnit = new IpayOrderRequestPurchaseUnit();
             purchaseUnit.Amount = new OrderRequestPurchaseUnitAmount();

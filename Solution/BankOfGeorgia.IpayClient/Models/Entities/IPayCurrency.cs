@@ -4,7 +4,7 @@ using System.Text;
 
 namespace BankOfGeorgia.IpayClient
 {
-    public static class Currency
+    public static class IPayCurrency
     {
         public const string GEL = "GEL";
         public const string USD = "USD";

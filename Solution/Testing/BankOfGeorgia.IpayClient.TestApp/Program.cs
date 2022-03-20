@@ -21,8 +21,8 @@ namespace BankOfGeorgia.IpayClient.TestApp
 
             OrderItem[] orderItems = new[]
             {
-                new OrderItem() { Amount = 1.7m, Description = "First product", Quantity = 1, ProductId = "P001"},
-                new OrderItem() { Amount= 2.5m, Description =  "Second product", Quantity =  3, ProductId = "P002"}
+                new OrderItem() { Price = 1.7m, Description = "First product", Quantity = 1, ProductId = "P001" },
+                new OrderItem() { Price = 2.5m, Description =  "Second product", Quantity =  3, ProductId = "P002" }
             };
 
             //Make order with automatic capture
@@ -56,7 +56,7 @@ namespace BankOfGeorgia.IpayClient.TestApp
                     OrderId = orderResult.OrderId,
                     Amount = new Amount()
                     {
-                        Currency = Currency.GEL,
+                        Currency = IPayCurrency.GEL,
                         Value = 1.7m
                     },
                     ShopOrderId = Guid.NewGuid().ToString("N"),
@@ -84,7 +84,7 @@ namespace BankOfGeorgia.IpayClient.TestApp
                 Locale = Locale.KA,
                 ShopOrderId = Guid.NewGuid().ToString("N"),
                 RedirectUrl = "https://example.ge/api/ipayreturn",
-                Currency = Currency.GEL,
+                Currency = IPayCurrency.GEL,
                 ShowShopOrderIdOnExtract = true,
                 Items = orderItems
             };
