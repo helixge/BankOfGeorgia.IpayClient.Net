@@ -1,9 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.Configuration;
-using Moq;
 using System;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace BankOfGeorgia.IpayClient.Tests.Integrations
