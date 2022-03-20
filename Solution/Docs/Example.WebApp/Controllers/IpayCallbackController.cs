@@ -8,10 +8,10 @@ namespace Example.WebApp.Controllers
 {
     public class IpayCallbackController : Controller
     {
-        private readonly BankOfGeorgiaIpayClient _iPayClient;
+        private readonly IBankOfGeorgiaIpayClient _iPayClient;
 
         public IpayCallbackController(
-            BankOfGeorgiaIpayClient IpayClient
+            IBankOfGeorgiaIpayClient IpayClient
             )
         {
             _iPayClient = IpayClient;
