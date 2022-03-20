@@ -19,6 +19,7 @@ namespace BankOfGeorgia.IpayClient
         Task<MakeRecurringOrderResponse> MakeRecurringOrderAsync(IpayRecurringOrderRequest order);
         Task<ServiceResponse> RefundAsync(string orderId, decimal? amount = null);
     }
+
     /// <summary>
     /// Full documentation is located at: https://developer.ipay.ge/v1/
     /// </summary>
