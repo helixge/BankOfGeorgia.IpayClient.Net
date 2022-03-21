@@ -33,8 +33,7 @@ To integrate the client with ASP.NET Core dependency injection pipeline, use the
    "iPay": {
       "ClientId": "your-ipay-client-id",
       "SecretKey": "your-ipay-client-secret",
-    }
-  ]
+   }
   
    //...other options
 }
@@ -60,7 +59,7 @@ public class Startup
 }
 ```
 
-3. Inject ```IBankOfGeorgiaIpayClient```:
+3. Inject ```IBankOfGeorgiaIpayClient``` and use in your code:
 ````csharp
 public class HomeController : Controller
 {
