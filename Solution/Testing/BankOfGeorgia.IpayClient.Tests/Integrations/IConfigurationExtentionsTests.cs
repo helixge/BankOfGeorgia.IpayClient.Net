@@ -24,5 +24,7 @@ namespace BankOfGeorgia.IpayClient.Tests.Integrations
             options.ClientId.Should().Be(configurationSource.ClientId);
             options.SecretKey.Should().Be(configurationSource.SecretKey);
         }
+
+        //TODO: Test exception when no configuration provided. Same as above but test with different keys
     }
 }

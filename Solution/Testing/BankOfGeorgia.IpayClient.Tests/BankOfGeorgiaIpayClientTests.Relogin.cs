@@ -1,4 +1,6 @@
-﻿namespace BankOfGeorgia.IpayClient.Tests
+﻿using Moq;
+
+namespace BankOfGeorgia.IpayClient.Tests
 {
     public class BankOfGeorgiaIpayClientTests_Relogin
     {
@@ -7,6 +9,12 @@
 
         public void MakeOrderAsync_SecondCallWithInvalidToken_ShouldReloginLogin()
         {
+            //var httpClientMock = new Mock<HttpClient>();
+            //httpClientMock
+            //    .Setup(c => c.SendAsync(It.IsAny<HttpRequestMessage>()))
+            //    .Returns(message => Task.FromResult(new HttpResponseMessage() { }));
+
+
             //TODO: 
         }
 
