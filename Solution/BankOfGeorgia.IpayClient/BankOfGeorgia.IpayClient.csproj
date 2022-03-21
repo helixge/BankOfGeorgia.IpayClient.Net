@@ -1,58 +1,58 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <RootNamespace>BankOfGeorgia.IpayClient</RootNamespace>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Authors>Helix</Authors>
-    <Company>Helix</Company>
-    <PackageProjectUrl>https://github.com/helixge/BankOfGeorgia.IpayClient.Net</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/helixge/BankOfGeorgia.IpayClient.Net</RepositoryUrl>
-    <Copyright>Helix</Copyright>
-    <PackageId>Helix.BankOfGeorgia.IpayClient</PackageId>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageTags>bankofgeorgia;bank of georgia;bank;ecommerce;payments;visa;mastercard;master card;amex;american express;americanexpress;e-commerce</PackageTags>
-    <PackageIcon>helix.png</PackageIcon>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
-    <Version>1.0.0</Version>
-    <Product>Bank of Georgia iPay Card Payments Gateway Client (.NET Library)</Product>
-    <UserSecretsId>bf221326-8568-4e91-a30d-43848f236c34</UserSecretsId>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.1</TargetFramework>
+		<RootNamespace>BankOfGeorgia.IpayClient</RootNamespace>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Authors>Helix</Authors>
+		<Company>Helix</Company>
+		<PackageProjectUrl>https://github.com/helixge/BankOfGeorgia.IpayClient.Net</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/helixge/BankOfGeorgia.IpayClient.Net</RepositoryUrl>
+		<Copyright>Helix</Copyright>
+		<PackageId>Helix.BankOfGeorgia.IpayClient</PackageId>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<PackageTags>bankofgeorgia;bank of georgia;bank;ecommerce;payments;visa;mastercard;master card;amex;american express;americanexpress;e-commerce</PackageTags>
+		<PackageIcon>helix.png</PackageIcon>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<AssemblyVersion>1.0.0.0</AssemblyVersion>
+		<FileVersion>1.0.0.0</FileVersion>
+		<Version>1.0.0</Version>
+		<Product>Bank of Georgia iPay Card Payments Gateway Client (.NET Library)</Product>
+		<UserSecretsId>bf221326-8568-4e91-a30d-43848f236c34</UserSecretsId>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>D:\Dev\helix\BankOfGeorgia.IpayClient.Net\Solution\BankOfGeorgia.IpayClient\BankOfGeorgia.IpayClient.xml</DocumentationFile>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DocumentationFile>D:\Dev\helix\BankOfGeorgia.IpayClient.Net\Solution\BankOfGeorgia.IpayClient\BankOfGeorgia.IpayClient.xml</DocumentationFile>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="JWT" Version="7.3.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="JWT" Version="7.3.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Include="..\..\helix.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-    <None Include="..\..\LICENSE">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\helix.png">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+		<None Include="..\..\LICENSE">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+	</ItemGroup>
 
-  <Target Name="PreparePackageReleaseNotesFromFile" BeforeTargets="GenerateNuspec">
-    <ReadLinesFromFile File="../../RELEASE-NOTES.txt">
-      <Output TaskParameter="Lines" ItemName="ReleaseNoteLines" />
-    </ReadLinesFromFile>
-    <PropertyGroup>
-      <PackageReleaseNotes>@(ReleaseNoteLines, '%0a')</PackageReleaseNotes>
-    </PropertyGroup>
-  </Target>
+	<Target Name="PreparePackageReleaseNotesFromFile" BeforeTargets="GenerateNuspec">
+		<ReadLinesFromFile File="../../RELEASE-NOTES.txt">
+			<Output TaskParameter="Lines" ItemName="ReleaseNoteLines" />
+		</ReadLinesFromFile>
+		<PropertyGroup>
+			<PackageReleaseNotes>@(ReleaseNoteLines, '%0a')</PackageReleaseNotes>
+		</PropertyGroup>
+	</Target>
 </Project>
