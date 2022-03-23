@@ -29,55 +29,51 @@ var client = new BankOfGeorgiaIpayClient(clientOptions);
 To integrate the client with ASP.NET Core dependency injection pipeline, use the following steps:
 
 1. Add an entry in your appSettings.json file and specify your iPay `ClientId` and `SecretKey`):
-```js
-{
-   //...other options
-   
-   "iPay": {
-      "ClientId": "your-ipay-client-id",
-      "SecretKey": "your-ipay-client-secret",
-   }
+    ```js 
+    {
+       //...other options
+       
+       "iPay": {
+          "ClientId": "your-ipay-client-id",
+          "SecretKey": "your-ipay-client-secret",
+       }
   
-   //...other options
-}
-```
-
-2. Call ```AddBankOfGeorgiaIpay``` in ```ConfigureServices``` method of ```Startup.cs``` and specify the configuration parameter name containing the options array (for this example we called the entry ```iPay```):
-````csharp
-services.AddBankOfGeorgiaIpay(
-  Configuration.GetBankOfGeorgiaIpayClientOptions("iPay")
-);
-````
-
-> Make sure you have access to ```Configuration```. If you are missing configuration, you can inject it in your `Startup`:
-```csharp
-public class Startup
-{
-    public IConfiguration Configuration { get; }
-
-    public Startup(IConfiguration configuration)
-    {
-        Configuration = configuration;
+       //...other options
     }
-}
-```
+    ```
 
-3. Inject ```IBankOfGeorgiaIpayClient``` and use in your code:
-````csharp
-public class HomeController : Controller
-{
-    private readonly IBankOfGeorgiaIpayClient _iPayClient;
+2. Call `AddBankOfGeorgiaIpay` in `ConfigureServices` method of `Startup.cs` and specify the configuration parameter name containing the options array (for this example we called the entry `iPay`):
+    ```csharp
+    services.AddBankOfGeorgiaIpay(
+      Configuration.GetBankOfGeorgiaIpayClientOptions("iPay")
+    );
+    ```
 
-    public HomeController(
-        IBankOfGeorgiaIpayClient iPayClient
-        )
+    Make sure you have access to `Configuration`. If you are missing configuration, you can inject it in your `Startup`):   
+    ```csharp
+    public class Startup
     {
-        _iPayClient = iPayClient;
+        public IConfiguration Configuration { get; }
+    
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
     }
+    ```
 
-    //...other methods
-}
-````
+3. Inject `IBankOfGeorgiaIpayClient` and use in your code:    
+    ```csharp
+    public class HomeController : Controller
+    {
+        private readonly IBankOfGeorgiaIpayClient _iPayClient;
+    
+        public HomeController(IBankOfGeorgiaIpayClient iPayClient)
+        {
+            _iPayClient = iPayClient;
+        }
+    }
+    ```
 
 ## Methods
 No manual authentication is required. Access token will be requested when needed and when it expires automatically.
