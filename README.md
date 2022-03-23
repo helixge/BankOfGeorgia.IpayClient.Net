@@ -83,7 +83,8 @@ public class HomeController : Controller
 No manual authentication is required. Access token will be requested when needed and when it expires automatically.
 
 * **MakeOrderAsync**    
-Place an one-time order
+Place an one-time order \
+\
 This method encapsulates a [/api/v1/checkout/orders](https://api.bog.ge/docs/en/ipay/create-order) endpoint and simplifies the request model. 
 
 
@@ -99,8 +100,11 @@ There are two ways the transaction can be processed, called the `capture_method`
 - AUTOMATIC \
 - MANUAL \
 See this for more details https://api.bog.ge/docs/en/ipay/create-order \
-\
-if the transaction was created using `MANUAL` capture method, it needs to be confirmed by calling this method. \
+If the transaction was created using `MANUAL` capture method, it needs to be confirmed by calling this method. \
 \
 This method encapsulates a [/api/v1/checkout/payment/{order_id}/pre-auth/completion](https://api.bog.ge/docs/en/ipay/pre-authorization). 
 
+* **RefundAsync**
+Refund the transaction fully or partially \
+\
+This method encapsulates a [/api/v1/checkout/refund](https://api.bog.ge/docs/en/ipay/refund). 
