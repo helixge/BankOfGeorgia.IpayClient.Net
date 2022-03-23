@@ -94,3 +94,13 @@ If you don't want to charge the user for the first time and want the Bank to rem
 \
 This method encapsulates a [/api/v1/checkout/payment/subscription](https://api.bog.ge/docs/en/ipay/recurring-payments). 
 
+* **MakeRecurringOrderAsync**
+There are two ways the transaction can be processed, called the `capture_method`: \
+- AUTOMATIC \
+- MANUAL \
+See this for more details https://api.bog.ge/docs/en/ipay/create-order \
+\
+if the transaction was created using `MANUAL` capture method, it needs to be confirmed by calling this method. \
+\
+This method encapsulates a [/api/v1/checkout/payment/{order_id}/pre-auth/completion](https://api.bog.ge/docs/en/ipay/pre-authorization). 
+
