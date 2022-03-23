@@ -83,28 +83,28 @@ public class HomeController : Controller
 No manual authentication is required. Access token will be requested when needed and when it expires automatically.
 
 * **MakeOrderAsync**    
-Place an one-time order \
-\
-This method encapsulates a [/api/v1/checkout/orders](https://api.bog.ge/docs/en/ipay/create-order) endpoint and simplifies the request model. 
+Place an one-time order
+    
+    > This method encapsulates a [/api/v1/checkout/orders](https://api.bog.ge/docs/en/ipay/create-order) endpoint and simplifies the request model. 
 
 
 * **MakeRecurringOrderAsync**    
 Place an order for a recurring payments without user's interraction. You need to create an initial order to use recurring payments, where the user will enter their credit card details for the Bank to remember. You will need an ID of an existing order to perform additional reocurring orders.\
 \
-If you don't want to charge the user for the first time and want the Bank to remember the card details for future use, you will still have to create an initial order for the minimum amount of 0.10 GEL and then you refund it. \
-\
-This method encapsulates a [/api/v1/checkout/payment/subscription](https://api.bog.ge/docs/en/ipay/recurring-payments). 
+If you don't want to charge the user for the first time and want the Bank to remember the card details for future use, you will still have to create an initial order for the minimum amount of 0.10 GEL and then you refund it.
+    
+    > This method encapsulates a [/api/v1/checkout/payment/subscription](https://api.bog.ge/docs/en/ipay/recurring-payments). 
 
 * **MakeRecurringOrderAsync**
 There are two ways the transaction can be processed, called the `capture_method`: \
-- AUTOMATIC \
-- MANUAL \
+`- AUTOMATIC` \
+`- MANUAL` \
 See this for more details https://api.bog.ge/docs/en/ipay/create-order \
-If the transaction was created using `MANUAL` capture method, it needs to be confirmed by calling this method. \
-\
-This method encapsulates a [/api/v1/checkout/payment/{order_id}/pre-auth/completion](https://api.bog.ge/docs/en/ipay/pre-authorization). 
+If the transaction was created using `MANUAL` capture method, it needs to be confirmed by calling this method.
+    
+    > This method encapsulates a [/api/v1/checkout/payment/{order_id}/pre-auth/completion](https://api.bog.ge/docs/en/ipay/pre-authorization). 
 
 * **RefundAsync**
-Refund the transaction fully or partially \
-\
-This method encapsulates a [/api/v1/checkout/refund](https://api.bog.ge/docs/en/ipay/refund). 
+Refund the transaction fully or partially
+    
+    > This method encapsulates a [/api/v1/checkout/refund](https://api.bog.ge/docs/en/ipay/refund). 
