@@ -1,47 +1,43 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Newtonsoft.Json;
 
 namespace BankOfGeorgia.IpayClient
 {
     public abstract class CallbackResponse
     {
-        [BindProperty(Name = "order_id")]
+        [JsonProperty("order_id")]
         public string OrderId { get; set; }
 
-        [BindProperty(Name = "payment_hash")]
+        [JsonProperty("payment_hash")]
         public string PaymentHash { get; set; }
 
-        [BindProperty(Name = "ipay_payment_id")]
+        [JsonProperty("ipay_payment_id")]
         public string IpayPaymentId { get; set; }
 
-        [BindProperty(Name = "status_description")]
+        [JsonProperty("status_description")]
         public string StatusDescription { get; set; }
 
-        [BindProperty(Name = "shop_order_id")]
+        [JsonProperty("shop_order_id")]
         public string ShopOrderId { get; set; }
 
-        [BindProperty(Name = "payment_method")]
+        [JsonProperty("payment_method")]
         public PaymentMethod PaymentMethod { get; set; }
 
-        [BindProperty(Name = "card_type")]
+        [JsonProperty("card_type")]
         public CardType CardType { get; set; }
     }
 
     public class PaymentCallbackResult : CallbackResponse
     {
-        [BindProperty(Name = "status")]
+        [JsonProperty("status")]
         public PaymentStatus Status { get; set; }
 
-        [BindProperty(Name = "pan")]
+        [JsonProperty("pan")]
         public string Pan { get; set; }
 
-        [BindProperty(Name = "transaction_id")]
+        [JsonProperty("transaction_id")]
         public string TransactionId { get; set; }
 
-        [BindProperty(Name = "pre_auth_status")]
+        [JsonProperty("pre_auth_status")]
         public PreAuthStatus PreAuthStatus { get; set; }
     }
 
