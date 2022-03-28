@@ -3,8 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace BankOfGeorgia.IpayClient.TestApp
@@ -29,6 +27,8 @@ namespace BankOfGeorgia.IpayClient.TestApp
             {
                 MakeOrderResponse orderResult = await MakeOrder(client, CaptureMethod.Automatic, orderItems);
                 OpenUrlInBworser(orderResult.GetRedirectUrl());
+
+                GetPaymentDetailsResponse paymentDetails = await GetPaymentDetailsAsync(client, orderResult.OrderId);
             }
 
             //Make order with manual capture and complete preauthorization
@@ -90,13 +90,20 @@ namespace BankOfGeorgia.IpayClient.TestApp
             };
 
             MakeOrderResponse orderResult = await client.MakeOrderAsync(order);
-            
+
             return orderResult;
+        }
+
+        public static async Task<GetPaymentDetailsResponse> GetPaymentDetailsAsync(BankOfGeorgiaIpayClient client, string orderId)
+        {
+            GetPaymentDetailsResponse orderDetails = await client.GetPaymentDetailsAsync(orderId);
+            return orderDetails;
         }
 
         private static ServiceProvider CreateServiceProvider()
         {
             var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
                 .AddUserSecrets<Program>()
                 .Build();
             var options = config.GetBankOfGeorgiaIpayClientOptions("iPay");

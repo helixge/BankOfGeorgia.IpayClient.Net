@@ -27,7 +27,6 @@ namespace BankOfGeorgia.IpayClient
     {
         private readonly BankOfGeorgiaIpayClientOptions _options;
         private readonly HttpClient _httpClient;
-        private readonly ILogger<BankOfGeorgiaIpayClient> _logger;
         private readonly IMappingService _mappingService;
         private string _accessToken = null;
 
@@ -42,13 +41,11 @@ namespace BankOfGeorgia.IpayClient
         public BankOfGeorgiaIpayClient(
             BankOfGeorgiaIpayClientOptions options,
             HttpClient httpClient,
-            ILogger<BankOfGeorgiaIpayClient> logger,
             IMappingService mappingService
             )
         {
             _options = options;
             _httpClient = httpClient;
-            _logger = logger;
             _mappingService = mappingService;
         }
 
@@ -262,7 +259,13 @@ namespace BankOfGeorgia.IpayClient
 
         private string GetFullUrl(string endpoint)
         {
-            return $"https://ipay.ge/opay/api/v1{endpoint}";
+            if (String.IsNullOrWhiteSpace(_options.BaseUrl))
+            {
+                return $"https://ipay.ge/opay/api/v1{endpoint}";
+            }
+
+            var baseUrl = _options.BaseUrl.TrimEnd('/');
+            return $"{baseUrl}{endpoint}";
         }
 
         private void ProcessTokenRequestMessage(HttpRequestMessage message)

@@ -1,6 +1,6 @@
 # Bank of Georgia iPay Card Payments Gateway Client (.NET Library)
 
-[![Version](https://helix.ge/helix-bankofgeorgia-ipayclient-nuget.svg?1-1-0)](https://www.nuget.org/packages/Helix.BankOfGeorgia.IpayClient)
+[![Version](https://helix.ge/helix-bankofgeorgia-ipayclient-nuget.svg?1-2-0)](https://www.nuget.org/packages/Helix.BankOfGeorgia.IpayClient)
 
 [Helix.BankOfGeorgia.IpayClient](https://www.nuget.org/packages/Helix.BankOfGeorgia.IpayClient) is a .NET client library for using Bank of Georgia iPay Visa, Master Card and Americal Express payments gateway.
 
@@ -42,6 +42,21 @@ To integrate the client with ASP.NET Core dependency injection pipeline, use the
     }
     ```
 
+    If you want to play with the **DEMO** mode, you can use the following configuration parameters:
+    ````js
+     {
+       //...other options
+       
+       "iPay": {
+          "ClientId": "1006",
+          "SecretKey": "581ba5eeadd657c8ccddc74c839bd3ad",
+          "BaseUrl": "https://dev.ipay.ge/opay/api/v1"
+       }
+  
+       //...other options
+    }
+    ````
+    :warning: **BaseUrl** is **NOT** required for production use. If you leave this parameter empty or remove it completely, the default production URL will be used: https://ipay.ge/opay/api/v1
 2. Call `AddBankOfGeorgiaIpay` in `ConfigureServices` method of `Startup.cs` and specify the configuration parameter name containing the options array (for this example we called the entry `iPay`):
     ```csharp
     services.AddBankOfGeorgiaIpay(

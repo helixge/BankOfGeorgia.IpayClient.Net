@@ -1,3 +1,6 @@
+v1.2.0
+    - Added demo endpoint support
+
 v1.1.0
     - Cleanups and package reference fixes
 
