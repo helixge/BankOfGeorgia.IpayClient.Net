@@ -1,2 +1,5 @@
+v1.1.0
+    - Cleanups and package reference fixes
+
 v1.0.0
     - Hello, world!
