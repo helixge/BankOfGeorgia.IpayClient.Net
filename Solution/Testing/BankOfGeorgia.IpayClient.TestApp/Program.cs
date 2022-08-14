@@ -73,6 +73,16 @@ namespace BankOfGeorgia.IpayClient.TestApp
 
                 GetPaymentDetailsResponse paymentDetails = await client.GetPaymentDetailsAsync(orderResult.OrderId);
             }
+
+            //Refund
+            {
+                MakeOrderResponse orderResult = await MakeOrder(client, CaptureMethod.Automatic, orderItems);
+                OpenUrlInBworser(orderResult.GetRedirectUrl());
+
+                GetPaymentDetailsResponse paymentDetails = await GetPaymentDetailsAsync(client, orderResult.OrderId);
+
+                ServiceResponse refungResult = await MakeRefundAsyunc(client, orderResult.OrderId);
+            }
         }
 
         public static async Task<MakeOrderResponse> MakeOrder(BankOfGeorgiaIpayClient client, CaptureMethod captureMethod, OrderItem[] orderItems)
@@ -99,6 +109,13 @@ namespace BankOfGeorgia.IpayClient.TestApp
             GetPaymentDetailsResponse orderDetails = await client.GetPaymentDetailsAsync(orderId);
             return orderDetails;
         }
+
+        public static async Task<ServiceResponse> MakeRefundAsyunc(BankOfGeorgiaIpayClient client, string orderId)
+        {
+            ServiceResponse refundDetails = await client.RefundAsync(orderId);
+            return refundDetails;
+        }
+
 
         private static ServiceProvider CreateServiceProvider()
         {
