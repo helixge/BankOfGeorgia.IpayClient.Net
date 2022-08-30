@@ -1,3 +1,7 @@
+v1.3.0
+    - Method responses not contain the actual request information that is submitted to iPay (RequestURL, RequestMethod, RawRequestPayload)
+    - Added 'BindProperty' attributed to callback methods to be used in MVC controller action parameters
+
 v1.2.0
     - Added demo endpoint support
 
