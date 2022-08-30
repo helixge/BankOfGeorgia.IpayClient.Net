@@ -213,6 +213,7 @@ namespace BankOfGeorgia.IpayClient
             Action<HttpRequestMessage> processRequestMessage = null)
             where TResult : ServiceResponse, new()
         {
+            TResult result = null;
             try
             {
                 if (useJwtAuth)
@@ -227,21 +228,24 @@ namespace BankOfGeorgia.IpayClient
 
                 string responseContent = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-                TResult result = JsonConvert.DeserializeObject<TResult>(responseContent);
+                result = JsonConvert.DeserializeObject<TResult>(responseContent);
                 result.RawResponse = responseContent;
                 result.HttpStatusCode = (int)httpResponseMessage.StatusCode;
                 result.IsError = !httpResponseMessage.IsSuccessStatusCode;
-
-                return result;
             }
             catch (Exception ex)
             {
-                return new TResult()
+                result = new TResult()
                 {
                     IsError = true,
                     Exception = ex
                 };
             }
+
+            result.RequestURL = requestMessage.RequestUri.ToString();
+            result.RequestMethod = requestMessage.Method.Method;
+            result.RawRequestPayload = await requestMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+            return result;
         }
 
         private async Task AuthenticateIfRequired()
