@@ -1,5 +1,5 @@
 v1.4.0
-    - Upgrade dependent packaged to .NET 5
+    - Downgrade dependent packaged to .NET 5
 
 v1.3.0
     - Method responses not contain the actual request information that is submitted to iPay (RequestURL, RequestMethod, RawRequestPayload)
