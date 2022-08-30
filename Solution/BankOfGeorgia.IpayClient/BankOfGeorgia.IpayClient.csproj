@@ -14,9 +14,9 @@
 		<PackageTags>bankofgeorgia;bank of georgia;bank;ecommerce;payments;visa;mastercard;master card;amex;american express;americanexpress;e-commerce</PackageTags>
 		<PackageIcon>helix.png</PackageIcon>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-		<AssemblyVersion>1.3.0.0</AssemblyVersion>
-		<FileVersion>1.3.0.0</FileVersion>
-		<Version>1.3.0</Version>
+		<AssemblyVersion>1.4.0.0</AssemblyVersion>
+		<FileVersion>1.4.0.0</FileVersion>
+		<Version>1.4.0</Version>
 		<Product>Bank of Georgia iPay Card Payments Gateway Client (.NET Library)</Product>
 		<UserSecretsId>bf221326-8568-4e91-a30d-43848f236c34</UserSecretsId>
 	</PropertyGroup>
