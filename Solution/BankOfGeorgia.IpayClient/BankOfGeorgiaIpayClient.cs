@@ -244,7 +244,10 @@ namespace BankOfGeorgia.IpayClient
 
             result.RequestURL = requestMessage.RequestUri.ToString();
             result.RequestMethod = requestMessage.Method.Method;
-            result.RawRequestPayload = await requestMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+            if (requestMessage.Content != null)
+            {
+                result.RawRequestPayload = await requestMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+            }
             return result;
         }
 
