@@ -229,6 +229,10 @@ namespace BankOfGeorgia.IpayClient
                 string responseContent = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
 
                 result = JsonConvert.DeserializeObject<TResult>(responseContent);
+                if(result == null)
+                {
+                    result = new TResult();
+                }
                 result.RawResponse = responseContent;
                 result.HttpStatusCode = (int)httpResponseMessage.StatusCode;
                 result.IsError = !httpResponseMessage.IsSuccessStatusCode;
