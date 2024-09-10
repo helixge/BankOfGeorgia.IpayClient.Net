@@ -1,3 +1,6 @@
+v1.7.0
+    - Fixed decimal parsing
+
 v1.6.0
     - Fixed an issue with null reference on HTTP request
 
