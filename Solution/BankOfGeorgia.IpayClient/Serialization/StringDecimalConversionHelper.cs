@@ -9,7 +9,7 @@ namespace BankOfGeorgia.IpayClient
         public static string ConvertDecimalToString(decimal value)
         {
             return value
-                .ToString("#.#")
+                .ToString("#.00")
                 .Replace(",", ".")
                 .Replace(" ", String.Empty);
         }
