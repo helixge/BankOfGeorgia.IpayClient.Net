@@ -1,0 +1,401 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BankOfGeorgia.IpayClient</name>
+    </assembly>
+    <members>
+        <member name="M:BankOfGeorgia.IpayClient.JwtHelper.IsTokenValid(System.String)">
+            <summary>
+            iPay sets token exp date to creation time instead of expiration time,
+            so the token is effectively expired.
+            iPay Tokens expire in 60 seconds.
+            This method manually adds 60 seconds to the token exp time for expiry calculation and token validation.
+            The token is considered expired 5 seconds before the actual expiration to compensate for any delays 
+            </summary>
+            <param name="jwtToken"></param>
+            <returns></returns>
+        </member>
+        <member name="T:BankOfGeorgia.IpayClient.BankOfGeorgiaIpayClient">
+            <summary>
+            Full documentation is located at: https://developer.ipay.ge/v1/
+            </summary>
+        </member>
+        <member name="M:BankOfGeorgia.IpayClient.BankOfGeorgiaIpayClient.#ctor(BankOfGeorgia.IpayClient.BankOfGeorgiaIpayClientOptions,System.Net.Http.HttpClient,BankOfGeorgia.IpayClient.IMappingService)">
+            <summary>
+            Auto injectable client
+            </summary>
+            <param name="options"></param>
+            <param name="httpClient"></param>
+            <param name="logger"></param>
+        </member>
+        <member name="M:BankOfGeorgia.IpayClient.BankOfGeorgiaIpayClient.AuthenticateAsync">
+            <summary>
+            Authenticate API with user credentials
+            Endpoint: /oauth2/token
+            </summary>
+            <returns></returns>
+            <exception cref="T:BankOfGeorgia.IpayClient.IpayClientAuthenticationException">Thrown when auhentication fails</exception>
+        </member>
+        <member name="M:BankOfGeorgia.IpayClient.BankOfGeorgiaIpayClient.MakeOrderAsync(BankOfGeorgia.IpayClient.OrderRequest)">
+            <summary>
+            Make order request
+            Endpoint: /checkout/orders
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BankOfGeorgia.IpayClient.BankOfGeorgiaIpayClient.MakeRecurringOrderAsync(BankOfGeorgia.IpayClient.IpayRecurringOrderRequest)">
+            <summary>
+            Make recurring request
+            Endpoint: /checkout/payment/subscription
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BankOfGeorgia.IpayClient.BankOfGeorgiaIpayClient.CompletePreAuthPaymentAsync(System.String,BankOfGeorgia.IpayClient.CompletePreAuthPaymentRequest)">
+            <summary>
+            Complete pre-auth payment
+            Endpoint: /checkout/payment/pre-auth/complete/{order_id}
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BankOfGeorgia.IpayClient.BankOfGeorgiaIpayClient.RefundAsync(System.String,System.Nullable{System.Decimal})">
+            <summary>
+            Make reversal/unblock request
+            Endpoint: /checkout/refund
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BankOfGeorgia.IpayClient.BankOfGeorgiaIpayClient.GetPaymentDetailsAsync(System.String)">
+            <summary>
+            /checkout/payment/{order_id}
+            Endpoint: /checkout/payment/{order_id}
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:BankOfGeorgia.IpayClient.BankOfGeorgiaIpayClientOptions">
+            <summary>
+            Configuration options for BankOfGeorgiaIpayClient
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.BankOfGeorgiaIpayClientOptions.ClientId">
+            <summary>
+            The parameter is provided by the Bank of Georgia
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.BankOfGeorgiaIpayClientOptions.SecretKey">
+            <summary>
+            The parameter is provided by the Bank of Georgia
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.BankOfGeorgiaIpayClientOptions.BaseUrl">
+            <summary>
+            Optional parameter to manually set the BaseUrl
+            By default 'https://ipay.ge/opay/api/v1' endpoint will be used but
+            you can override this parameter if you want to use the demo endpoint
+            described here: https://github.com/BankOfGeorgia/iPay-ASP.NET-Core#ipay-demo
+            </summary>
+        </member>
+        <member name="M:BankOfGeorgia.IpayClient.BankOfGeorgiaIpayClientOptions.#ctor">
+            <summary>
+            Construct empty options
+            </summary>
+        </member>
+        <member name="M:BankOfGeorgia.IpayClient.BankOfGeorgiaIpayClientOptions.#ctor(System.String,System.String)">
+            <summary>
+            Construct options
+            </summary>
+            <param name="clientId">The parameter is provided by the Bank of Georgia</param>
+            <param name="secretKey">The parameter is provided by the Bank of Georgia</param>
+        </member>
+        <member name="T:BankOfGeorgia.IpayClient.OrderItem">
+            <summary>
+            Purchase order item
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.OrderItem.Description">
+            <summary>
+            Product description
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.OrderItem.Price">
+            <summary>
+            Product price
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.OrderItem.Quantity">
+            <summary>
+            Product quantity
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.OrderItem.ProductId">
+            <summary>
+            Product unique identifier in the store
+            </summary>
+        </member>
+        <member name="T:BankOfGeorgia.IpayClient.OrderRequest">
+            <summary>
+            Purchase order request
+            This is a DTO class that simplifies underlying iPay API request model
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.OrderRequest.Intent">
+            <summary>
+            Intent is responsible for the payment method of the interface of the page that the user sees after the iPay transition.
+            CAPTURE - provides several payment options for users, on the same page. Payment can be performed by card and with BOG digital credentials ( username &amp; password ).
+            AUTHORIZE - Allows users to pay only with entering card details.
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.OrderRequest.Locale">
+            <summary>
+            Localization on which ipay.ge payment page will be displayed. Defaulted to "ka" if not provided or invalid.
+            Available values: "ka", "en-US"
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.OrderRequest.ShopOrderId">
+            <summary>
+            Unique order ID in the shop
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.OrderRequest.RedirectUrl">
+            <summary>
+            URL of the page to which the payer will be redirected after a successful or failure payment. Does not contain any data.
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.OrderRequest.ShowShopOrderIdOnExtract">
+            <summary>
+            If the value is true, shop_order_id will appear in the extract.
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.OrderRequest.CaptureMethod">
+            <summary>
+            If value is MANUAL, amount is placed on hold and removed from available balance immediately.After that, you will need to complete pre-authorization by calling pre-auth/complete or unblock amount by calling refund. If you do not call one of these methods, the amount is automatically unlocked after 30 days.
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.OrderRequest.Currency">
+            <summary>
+            Purchase unit currency
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.OrderRequest.Items">
+            <summary>
+            Products
+            </summary>
+        </member>
+        <member name="F:BankOfGeorgia.IpayClient.CaptureMethod.Automatic">
+            <summary>
+            Amount is charged immediately and there is no need to call pre-auth/complete method.
+            </summary>
+        </member>
+        <member name="F:BankOfGeorgia.IpayClient.CaptureMethod.Manual">
+            <summary>
+            Amount is placed on hold and removed from available balance immediately. After that, you will need to complete pre-authorization by calling pre-auth/complete or unblock amount by calling refund. If you do not call one of these methods, the amount is automatically unlocked after 30 days.
+            </summary>
+        </member>
+        <member name="F:BankOfGeorgia.IpayClient.CardType.MC">
+            <summary>
+            Mastercard
+            </summary>
+        </member>
+        <member name="F:BankOfGeorgia.IpayClient.CardType.Visa">
+            <summary>
+            Visa
+            </summary>
+        </member>
+        <member name="F:BankOfGeorgia.IpayClient.CardType.Amex">
+            <summary>
+            American Express
+            </summary>
+        </member>
+        <member name="F:BankOfGeorgia.IpayClient.CardType.Unknown">
+            <summary>
+            თუ გადახდის ტიპი არის BOG_CARD ან GC_CARD, იწერება ბარათის ტიპი. დანარჩენ სხვა შემთხვევაში იწერება UNKNOWN
+            </summary>
+        </member>
+        <member name="T:BankOfGeorgia.IpayClient.Intent">
+            <summary>
+            What type of payment page should be displayed
+            </summary>
+        </member>
+        <member name="F:BankOfGeorgia.IpayClient.Intent.Capture">
+            <summary>
+            Provides several payment options for users, on the same page. Payment can be performed by card and with BOG digital credentials ( username &amp; password )
+            </summary>
+        </member>
+        <member name="F:BankOfGeorgia.IpayClient.Intent.Authorize">
+            <summary>
+            Allows users to pay ONLY with entering card details
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.IpayOrderItem.Amount">
+            <summary>
+            Amount
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.IpayOrderItem.Description">
+            <summary>
+            Product description
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.IpayOrderItem.Quantity">
+            <summary>
+            Product quantity
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.IpayOrderItem.ProductId">
+            <summary>
+            Product unique identifier in the store
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.IpayOrderRequestPurchaseUnit.Amount">
+            <summary>
+            Purchase unit amount entry
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.OrderRequestPurchaseUnitAmount.Currency">
+            <summary>
+            Purchase unit currency
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.OrderRequestPurchaseUnitAmount.Value">
+            <summary>
+            Purchase unit value
+            </summary>
+        </member>
+        <member name="F:BankOfGeorgia.IpayClient.PaymentMethod.GcCard">
+            <summary>
+            გადახდა შესრულებულია ბარათით
+            </summary>
+        </member>
+        <member name="F:BankOfGeorgia.IpayClient.PaymentMethod.BogCard">
+            <summary>
+            გადახდა შესრულებულია ავტორიზაციით
+            </summary>
+        </member>
+        <member name="F:BankOfGeorgia.IpayClient.PaymentMethod.BogLoyalty">
+            <summary>
+            გადახდა შესრულებულია PLUS ან MR ქულებით
+            </summary>
+        </member>
+        <member name="F:BankOfGeorgia.IpayClient.PaymentMethod.BogLoan">
+            <summary>
+            განვადებით ყიდვა
+            </summary>
+        </member>
+        <member name="F:BankOfGeorgia.IpayClient.PaymentMethod.Unknown">
+            <summary>
+            ბრუნდება იმ შემთხვევაში, თუ ორდერის სტატუსი არის error ან in_progress
+            </summary>
+        </member>
+        <member name="F:BankOfGeorgia.IpayClient.PaymentStatus.Success">
+            <summary>
+            გადახდის პროცესი დასრულდა წარმატებით
+            </summary>
+        </member>
+        <member name="F:BankOfGeorgia.IpayClient.PaymentStatus.Error">
+            <summary>
+            გადახდის პროცესი დასრულდა წარუმატებლად
+            </summary>
+        </member>
+        <member name="F:BankOfGeorgia.IpayClient.PaymentStatus.InProgress">
+            <summary>
+            გადახდის პროცესი არაა დასრულებული და თუ ორდერის გენერაციიდან 1 საათში მომხმარებელი არ დაასრულებს ტრანზაქციას, ის ავტომატურად გაუქმდება და გადავა error სტატუსზე. ეს სტატუსი ენიჭება გადახდას, როდესაც მომხმარებელი გადამისამართდება ბანკის ონლაინ გადახდის ვებგვერდზე, ხოლო ცვლილება ხდება გადახდის წარმატებით ან წარუმატებლად დასრულების შემდეგ
+            </summary>
+        </member>
+        <member name="F:BankOfGeorgia.IpayClient.PreAuthStatus.Success">
+            <summary>
+            პრეავტორიზაცია დამოწმებულია და თანხა გადარიცხულია მერჩანტთან
+            </summary>
+        </member>
+        <member name="F:BankOfGeorgia.IpayClient.PreAuthStatus.InProgress">
+            <summary>
+            მიმდინარეობს პრეავტორიზაცია. თანხა დაბლოკილია და შესაძლებელია დამოწმება და განბლოკვა
+            </summary>
+        </member>
+        <member name="F:BankOfGeorgia.IpayClient.PreAuthStatus.SuccessUnblocked">
+            <summary>
+            პრეავტორიზაცია განბლოკილია. თანხა დაბრუნებულია მომხმარებლის ანგარიშზე და ჩანს ხელმისაწვდომ თანხებში
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.IpayOrderRequest.Intent">
+            <summary>
+            Intent is responsible for the payment method of the interface of the page that the user sees after the iPay transition.
+            CAPTURE - provides several payment options for users, on the same page. Payment can be performed by card and with BOG digital credentials ( username &amp; password ).
+            AUTHORIZE - Allows users to pay only with entering card details.
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.IpayOrderRequest.Items">
+            <summary>
+            Products
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.IpayOrderRequest.Locale">
+            <summary>
+            Localization on which ipay.ge payment page will be displayed. Defaulted to "ka" if not provided or invalid.
+            Available values: "ka", "en-US"
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.IpayOrderRequest.ShopOrderId">
+            <summary>
+            Unique order ID in the shop
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.IpayOrderRequest.RedirectUrl">
+            <summary>
+            URL of the page to which the payer will be redirected after a successful or failure payment. Does not contain any data.
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.IpayOrderRequest.ShowShopOrderIdOnExtract">
+            <summary>
+            If the value is true, shop_order_id will appear in the extract.
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.IpayOrderRequest.CaptureMethod">
+            <summary>
+            If value is MANUAL, amount is placed on hold and removed from available balance immediately.After that, you will need to complete pre-authorization by calling pre-auth/complete or unblock amount by calling refund. If you do not call one of these methods, the amount is automatically unlocked after 30 days.
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.IpayOrderRequest.PurchaseUnits">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.AuthenticateResponse.ExpiresIn">
+            <summary>
+            Epoch milliseconds
+            </summary>
+        </member>
+        <member name="P:BankOfGeorgia.IpayClient.GetPaymentDetailsResponse.PreAuthStatus">
+            <summary>
+            პრეავტორიზაციის სტატუსი. ბრუნდება მხოლოდ მაშინ, თუ ორდერის გენერაციის დროს, capture_method არის MANUAL და ორდერის სტატუსი არის success
+            </summary>
+        </member>
+        <member name="M:BankOfGeorgia.IpayClient.MakeOrderResponse.GetRedirectUrl">
+            <summary>
+            Get redirect URL to navigate the client to after succesfully registering transaction
+            </summary>
+            <returns></returns>
+            <exception cref="T:BankOfGeorgia.IpayClient.IpayOrderException">Thrown when Links is null or redirect link not found</exception>
+        </member>
+        <member name="T:Microsoft.Extensions.DependencyInjection.IServiceCollectionExtentions">
+            <summary>
+            ASP.NET Core service collection extentions for service configuration
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.IServiceCollectionExtentions.AddBankOfGeorgiaIpay(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration,System.String)">
+            <summary>
+            Add services required for iPay
+            </summary>
+            <param name="services"></param>
+            <param name="configuration"></param>
+            <param name="settingsKey"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.IServiceCollectionExtentions.AddBankOfGeorgiaIpay(Microsoft.Extensions.DependencyInjection.IServiceCollection,BankOfGeorgia.IpayClient.BankOfGeorgiaIpayClientOptions)">
+            <summary>
+            Add services required for iPay
+            </summary>
+            <param name="services"></param>
+            <param name="options"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
