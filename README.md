@@ -1,121 +1,164 @@
-# Bank of Georgia iPay Card Payments Gateway Client (.NET Library)
 
-[![Version](https://helix.ge/helix-bankofgeorgia-ipayclient-nuget.svg?1-7-0)](https://www.nuget.org/packages/Helix.BankOfGeorgia.IpayClient)
+🇬🇪 საქართველოს ბანკის ინტეგრაცია — Nita123 Banking Architecture
 
-[Helix.BankOfGeorgia.IpayClient](https://www.nuget.org/packages/Helix.BankOfGeorgia.IpayClient) is a .NET client library for using Bank of Georgia iPay Visa, Master Card and Americal Express payments gateway.
+🇬🇧 Bank of Georgia Integration — Nita123 Banking Architecture
 
-Official API reference can be found here: \
-https://api.bog.ge/docs/en/ipay/introduction
+---
 
-## How To Use
-See [ASP.NET Core integration guide](#integrating-with-aspnet-core) below
+🇬🇪 1. დანიშნულება
 
-### Define options
-```csharp
-var clientOptions = new BankOfGeorgiaIpayClientOptions()
-{
-    ClientId = "your-ipay-client-id",
-    SecretKey = "your-ipay-client-secret",
-};
-```
+🇬🇧 1. Purpose
 
-### Create client
-```csharp
-var client = new BankOfGeorgiaIpayClient(clientOptions);
-```
+საქართველოს ბანკის (Bank of Georgia) მოდული უზრუნველყოფს უსაფრთხო, სტაბილურ და სტანდარტებზე დაფუძნებულ კომუნიკაციას ბანკის API‑ებთან.  
+The Bank of Georgia module provides secure, stable, and standards‑compliant communication with BoG APIs.
 
+მოდული შექმნილია და მხარდაჭერილია ივანე შაორშაძის მიერ.  
+The module is authored and maintained by Ivane Shaorshadze.
 
-## Integrating with ASP.NET Core
-To integrate the client with ASP.NET Core dependency injection pipeline, use the following steps:
+---
 
-1. Add an entry in your appSettings.json file and specify your iPay `ClientId` and `SecretKey`):
-    ```js 
-    {
-       //...other options
-       
-       "iPay": {
-          "ClientId": "your-ipay-client-id",
-          "SecretKey": "your-ipay-client-secret",
-       }
-  
-       //...other options
-    }
-    ```
+🇬🇪 2. ძირითადი შესაძლებლობები
 
-    If you want to play with the **DEMO** mode, you can use the following configuration parameters:
-    ````js
-     {
-       //...other options
-       
-       "iPay": {
-          "ClientId": "1006",
-          "SecretKey": "581ba5eeadd657c8ccddc74c839bd3ad",
-          "BaseUrl": "https://dev.ipay.ge/opay/api/v1"
-       }
-  
-       //...other options
-    }
-    ````
-    :warning: **BaseUrl** is **NOT** required for production use. If you leave this parameter empty or remove it completely, the default production URL will be used: https://ipay.ge/opay/api/v1
-2. Call `AddBankOfGeorgiaIpay` in `ConfigureServices` method of `Startup.cs` and specify the configuration parameter name containing the options array (for this example we called the entry `iPay`):
-    ```csharp
-    services.AddBankOfGeorgiaIpay(
-      Configuration.GetBankOfGeorgiaIpayClientOptions("iPay")
-    );
-    ```
+🇬🇧 2. Key Features
 
-    Make sure you have access to `Configuration`. If you are missing configuration, you can inject it in your `Startup`):   
-    ```csharp
-    public class Startup
-    {
-        public IConfiguration Configuration { get; }
-    
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-    }
-    ```
+- OAuth2 ავტორიზაცია  
+- OAuth2 authorization  
 
-3. Inject `IBankOfGeorgiaIpayClient` and use in your code:    
-    ```csharp
-    public class HomeController : Controller
-    {
-        private readonly IBankOfGeorgiaIpayClient _iPayClient;
-    
-        public HomeController(IBankOfGeorgiaIpayClient iPayClient)
-        {
-            _iPayClient = iPayClient;
-        }
-    }
-    ```
+- უსაფრთხო REST API კომუნიკაცია  
+- Secure REST API communication  
 
-## Methods
-No manual authentication is required. Access token will be requested when needed and when it expires automatically.
+- JWS ხელმოწერა  
+- JWS request signing  
 
-* **MakeOrderAsync**    
-Place an one-time order
-    
-    > This method encapsulates a [/api/v1/checkout/orders](https://api.bog.ge/docs/en/ipay/create-order) endpoint and simplifies the request model. 
+- JWE დაშიფვრა  
+- JWE payload encryption  
 
+- TLS 1.2+  
+- TLS 1.2+ transport security  
 
-* **MakeRecurringOrderAsync**    
-Place an order for a recurring payments without user's interraction. You need to create an initial order to use recurring payments, where the user will enter their credit card details for the Bank to remember. You will need an ID of an existing order to perform additional reocurring orders.\
-\
-If you don't want to charge the user for the first time and want the Bank to remember the card details for future use, you will still have to create an initial order for the minimum amount of 0.10 GEL and then you refund it.
-    
-    > This method encapsulates a [/api/v1/checkout/payment/subscription](https://api.bog.ge/docs/en/ipay/recurring-payments). 
+- ტრანზაქციების როუტინგი  
+- Transaction routing  
 
-* **MakeRecurringOrderAsync**
-There are two ways the transaction can be processed, called the `capture_method`: \
-`- AUTOMATIC` \
-`- MANUAL` \
-See this for more details https://api.bog.ge/docs/en/ipay/create-order \
-If the transaction was created using `MANUAL` capture method, it needs to be confirmed by calling this method.
-    
-    > This method encapsulates a [/api/v1/checkout/payment/{order_id}/pre-auth/completion](https://api.bog.ge/docs/en/ipay/pre-authorization). 
+- ლოგირება და აუდიტი  
+- Full logging and audit trail  
 
-* **RefundAsync**
-Refund the transaction fully or partially
-    
-    > This method encapsulates a [/api/v1/checkout/refund](https://api.bog.ge/docs/en/ipay/refund). 
+---
+
+🇬🇪 3. უსაფრთხოების სტანდარტები
+
+🇬🇧 3. Security Standards
+
+- OAuth2 Client Credentials  
+- TLS 1.2+  
+- JWS/JWE  
+- BoG certificate validation  
+- Request/Response logging  
+- Token regeneration audit  
+
+ყველა სერტიფიკატის განახლება timestamp‑დება.  
+All certificate updates are timestamped and archived.
+
+---
+
+🇬🇪 4. მოდულის სტრუქტურა
+
+🇬🇧 4. Module Structure
+
+`
+/bog
+  ├── routes/
+  ├── services/
+  ├── certificates/
+  ├── handlers/
+  ├── logs/
+  └── config.json
+`
+
+---
+
+🇬🇪 5. API ნაკადები
+
+🇬🇧 5. API Flows
+
+🇬🇪 ავტორიზაცია
+
+🇬🇧 Authorization
+1. OAuth2 ტოკენის მოთხოვნა  
+2. Token request  
+3. Token storage  
+4. Token regeneration logging  
+
+🇬🇪 გადახდები
+
+🇬🇧 Payments
+1. ინიციაცია / Initiation  
+2. JWS ხელმოწერა / JWS signing  
+3. JWE დაშიფვრა / JWE encryption  
+4. ბანკის ვალიდაცია / Bank validation  
+5. პასუხის დამუშავება / Response mapping  
+
+🇬🇪 ანგარიშების ინფორმაცია
+
+🇬🇧 Account Information
+1. მომხმარებლის ავტორიზაცია  
+2. Consent validation  
+3. Account data retrieval  
+4. Structured response  
+
+---
+
+🇬🇪 6. ლოგირება და აუდიტი
+
+🇬🇧 6. Logging & Audit
+
+ლოგირდება:  
+Logged:
+
+- დრო / Timestamp  
+- Endpoint  
+- სერტიფიკატი / Certificate  
+- ტოკენის მდგომარეობა / Token state  
+- პასუხის კოდი / Response code  
+- შეცდომები / Errors  
+
+აუდიტის ჩანაწერები არ იცვლება.  
+Audit entries cannot be modified.
+
+---
+
+🇬🇪 7. ავტორი
+
+🇬🇧 7. Author
+
+ივანე შაორშაძე  
+Ivane Shaorshadze  
+Sovereign System Architect · Nita123 Architecture
+
+ყველა commit და ცვლილება მოდის Verified Branch‑ებიდან.  
+All commits and changes originate from verified branches.
+
+---
+
+🇬🇪 8. დაკავშირებული მოდულები
+
+🇬🇧 8. Related Modules
+
+- TBC  
+- Credo  
+- Liberty  
+- iPay  
+- XS2A / OpenBanking  
+- Flame Codex  
+- Sovereign Capsule Tree  
+
+---
+
+🇬🇪 9. შენიშვნა
+
+🇬🇧 9. Note
+
+ეს მოდული არის Nita123 არქიტექტურის ნაწილი.  
+This module is part of the Nita123 architecture.
+
+არანაირი გარე შაბლონი ან დაუმტკიცებელი ცვლილება არ გადაფარავს ავტორის ფენას.  
+No external template or unauthorized modification overrides the author layer.
